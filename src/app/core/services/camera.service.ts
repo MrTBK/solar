@@ -48,7 +48,14 @@ export class CameraService {
 
     // Mobile adjustments
     if (this.device.isMobile()) {
-      this.defaultPos.set(0, 120, 180);
+      if (canvas.clientWidth < canvas.clientHeight) {
+        this.camera.fov = canvas.clientWidth < 600 ? 60 : 52;
+        this.defaultPos.set(0, 130, 190);
+      } else {
+        this.camera.fov = 45;
+        this.defaultPos.set(0, 80, 150);
+      }
+      this.camera.updateProjectionMatrix();
       this.camera.position.copy(this.defaultPos);
     }
   }
@@ -56,6 +63,11 @@ export class CameraService {
   public updateAspect(width: number, height: number): void {
     if (!this.camera) return;
     this.camera.aspect = width / height;
+    if (width < height) {
+      this.camera.fov = width < 600 ? 60 : 52;
+    } else {
+      this.camera.fov = 45;
+    }
     this.camera.updateProjectionMatrix();
   }
 

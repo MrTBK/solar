@@ -22,6 +22,7 @@ import { BlackHoleContactComponent } from './components/views/black-hole-contact
 import { TourPlayerComponent } from './components/tour-player/tour-player.component';
 import { RadarMiniMapComponent } from './components/radar-mini-map/radar-mini-map.component';
 import { DossierModalComponent } from './components/views/dossier-modal/dossier-modal.component';
+import { RotatePromptComponent } from './components/rotate-prompt/rotate-prompt.component';
 
 @Component({
   selector: 'app-root',
@@ -44,7 +45,8 @@ import { DossierModalComponent } from './components/views/dossier-modal/dossier-
     BlackHoleContactComponent,
     TourPlayerComponent,
     RadarMiniMapComponent,
-    DossierModalComponent
+    DossierModalComponent,
+    RotatePromptComponent
   ],
   templateUrl: './app.html'
 })

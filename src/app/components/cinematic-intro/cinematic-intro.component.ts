@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StateService } from '../../core/services/state.service';
+import { DeviceService } from '../../core/services/device.service';
 import { PORTFOLIO_CONFIG } from '../../data/portfolio.config';
 import { SOCIAL_DATA } from '../../data/social.data';
 
@@ -123,6 +124,7 @@ import { SOCIAL_DATA } from '../../data/social.data';
 })
 export class CinematicIntroComponent {
   private state = inject(StateService);
+  private device = inject(DeviceService);
 
   public config = PORTFOLIO_CONFIG;
   public social = SOCIAL_DATA;
@@ -131,6 +133,7 @@ export class CinematicIntroComponent {
 
   public enterSystem(): void {
     if (this.isFading()) return;
+    this.device.requestLandscape();
     this.isFading.set(true);
     setTimeout(() => {
       this.isDone.set(true);

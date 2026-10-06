@@ -63,6 +63,7 @@ export class CanvasSceneComponent implements AfterViewInit, OnDestroy {
   }
 
   @HostListener('window:resize')
+  @HostListener('window:orientationchange')
   onResize(): void {
     this.solarScene.resize();
   }
