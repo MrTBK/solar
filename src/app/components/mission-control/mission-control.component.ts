@@ -124,8 +124,13 @@ import { CelestialBodyConfig } from '../../models/celestial.model';
         </div>
 
         <!-- Shortcuts footer -->
-        <div class="mt-3 border-t border-slate-800/80 pt-2 font-mono text-[9px] text-slate-400">
-          SHORTCUTS: <span class="text-slate-200">[ESC]</span> Return · <span class="text-slate-200">[1-9]</span> Jump · <span class="text-slate-200">[M]</span> Audio
+        <div class="mt-3 border-t border-slate-800/80 pt-2 font-mono text-[9px] text-slate-400 leading-relaxed">
+          <span class="text-slate-200">[ESC/SPACE]</span> Return ·
+          <span class="text-slate-200">[1-9]</span> Jump ·
+          <span class="text-slate-200">[M]</span> Audio ·
+          <span class="text-slate-200">[T]</span> Orbits ·
+          <span class="text-slate-200">[L]</span> Labels ·
+          <span class="text-slate-200">[R]</span> Skills Row
         </div>
       </aside>
     }

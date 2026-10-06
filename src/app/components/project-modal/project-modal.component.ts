@@ -1,7 +1,6 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, HostListener, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StateService } from '../../core/services/state.service';
-import { ProjectData } from '../../models/project.model';
 
 @Component({
   selector: 'app-project-modal',
@@ -10,6 +9,7 @@ import { ProjectData } from '../../models/project.model';
   template: `
     @if (project(); as p) {
       <div
+        data-backdrop
         class="fixed inset-0 z-40 flex justify-end bg-slate-950/60 backdrop-blur-sm transition-all md:items-stretch"
         (click)="onBackdropClick($event)"
       >
@@ -19,6 +19,8 @@ import { ProjectData } from '../../models/project.model';
           <!-- Corner HUD Accents -->
           <div class="absolute top-4 left-4 h-3 w-3 border-t-2 border-l-2 border-cyan-400"></div>
           <div class="absolute top-4 right-4 h-3 w-3 border-t-2 border-r-2 border-cyan-400"></div>
+          <div class="absolute bottom-4 left-4 h-3 w-3 border-b-2 border-l-2 border-cyan-400"></div>
+          <div class="absolute bottom-4 right-4 h-3 w-3 border-b-2 border-r-2 border-cyan-400"></div>
 
           <!-- Close / Back Button -->
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -49,36 +51,26 @@ import { ProjectData } from '../../models/project.model';
                 {{ p.status }}
               </span>
             </div>
-            <p class="mt-1 font-mono text-xs text-slate-400">
-              {{ p.domain }}
-            </p>
-            <p class="mt-2 text-sm font-medium text-cyan-200">
-              {{ p.tagline }}
-            </p>
+            <p class="mt-1 font-mono text-xs text-slate-400">{{ p.domain }}</p>
+            <p class="mt-2 text-sm font-medium text-cyan-200">{{ p.tagline }}</p>
           </div>
 
           <!-- Screenshot Preview -->
           @if (p.image) {
-            <div
-              class="group relative mt-5 overflow-hidden rounded-xl border border-slate-800 bg-slate-900 shadow-lg"
-            >
+            <div class="group relative mt-5 overflow-hidden rounded-xl border border-slate-800 bg-slate-900 shadow-lg">
               <img
                 [src]="p.image"
                 [alt]="p.name + ' Preview'"
-                class="h-56 w-full object-cover object-top transition-transform duration-500 group-hover:scale-103"
+                class="h-56 w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
               />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"
-              ></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
             </div>
           }
 
           <!-- Key Metrics -->
           @if (p.metrics.length > 0) {
             <div class="mt-6">
-              <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">
-                MISSION METRICS
-              </div>
+              <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">MISSION METRICS</div>
               <div class="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                 @for (m of p.metrics; track m.label) {
                   <div class="rounded-xl border border-slate-800/80 bg-slate-900/60 p-2.5 text-center">
@@ -92,20 +84,14 @@ import { ProjectData } from '../../models/project.model';
 
           <!-- Description -->
           <div class="mt-6">
-            <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">
-              OVERVIEW &amp; OBJECTIVES
-            </div>
-            <p class="mt-2 text-sm leading-relaxed text-slate-300">
-              {{ p.longDescription }}
-            </p>
+            <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">OVERVIEW &amp; OBJECTIVES</div>
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">{{ p.longDescription }}</p>
           </div>
 
           <!-- Architecture & Highlights -->
           @if (p.highlights.length > 0) {
             <div class="mt-6">
-              <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">
-                KEY ARCHITECTURAL HIGHLIGHTS
-              </div>
+              <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">KEY ARCHITECTURAL HIGHLIGHTS</div>
               <ul class="mt-2 space-y-2 text-xs text-slate-300">
                 @for (h of p.highlights; track h) {
                   <li class="flex items-start gap-2">
@@ -120,9 +106,7 @@ import { ProjectData } from '../../models/project.model';
           <!-- Architecture Pipeline if present -->
           @if (p.architecture && p.architecture.length > 0) {
             <div class="mt-6">
-              <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">
-                PIPELINE ARCHITECTURE
-              </div>
+              <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">PIPELINE ARCHITECTURE</div>
               <div class="mt-2 flex flex-col gap-1.5 rounded-xl border border-slate-800/80 bg-slate-900/50 p-3 font-mono text-[11px]">
                 @for (step of p.architecture; track step; let idx = $index; let last = $last) {
                   <div class="flex items-center gap-2">
@@ -141,14 +125,10 @@ import { ProjectData } from '../../models/project.model';
 
           <!-- Technologies -->
           <div class="mt-6">
-            <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">
-              TECHNOLOGIES DEPLOYED
-            </div>
+            <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">TECHNOLOGIES DEPLOYED</div>
             <div class="mt-2 flex flex-wrap gap-2">
               @for (tech of p.technologies; track tech) {
-                <span
-                  class="rounded-lg border border-slate-700/80 bg-slate-900 px-2.5 py-1 font-mono text-xs text-slate-200"
-                >
+                <span class="rounded-lg border border-slate-700/80 bg-slate-900 px-2.5 py-1 font-mono text-xs text-slate-200">
                   {{ tech }}
                 </span>
               }
@@ -170,13 +150,17 @@ import { ProjectData } from '../../models/project.model';
                 <span>SOURCE REPOSITORY</span>
               </a>
             }
-
             <button
               (click)="close()"
               class="flex items-center justify-center gap-1.5 rounded-xl border border-slate-700/80 bg-slate-900 px-4 py-2.5 font-mono text-xs text-slate-300 transition-colors hover:border-slate-500 hover:text-white"
             >
               <span>RETURN TO SYSTEM</span>
             </button>
+          </div>
+
+          <!-- Keyboard hint -->
+          <div class="mt-3 text-center font-mono text-[10px] text-slate-700">
+            [ ESC ] return to system overview
           </div>
         </div>
       </div>
@@ -188,12 +172,23 @@ export class ProjectModalComponent {
 
   public project = computed(() => this.state.activeProject());
 
+  @HostListener('window:keydown', ['$event'])
+  onKey(e: KeyboardEvent): void {
+    if (!this.project()) return;
+    const tag = (e.target as HTMLElement)?.tagName;
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+    if (e.key === 'Escape') {
+      this.close();
+    }
+  }
+
   public close(): void {
     this.state.returnToSystem();
   }
 
   public onBackdropClick(e: MouseEvent): void {
-    if ((e.target as HTMLElement).classList.contains('fixed')) {
+    const target = e.target as HTMLElement;
+    if (target.hasAttribute('data-backdrop')) {
       this.close();
     }
   }

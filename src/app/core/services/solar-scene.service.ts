@@ -62,6 +62,7 @@ export class SolarSceneService {
     particles: THREE.Points;
   };
   private devouredNotified = false;
+  private blackHoleShakeIntensity = 0;
 
   // Special animated objects
   private sunMesh: THREE.Mesh | null = null;
@@ -377,19 +378,27 @@ export class SolarSceneService {
       this.blackHole.group.scale.set(0.001, 0.001, 0.001);
     }
 
-    // Restore regular celestial bodies
+    // Restore regular celestial bodies: position, scale, and pivot rotation
     this.objects.forEach((rec) => {
       rec.mesh.position.copy(rec.initialLocalPos);
       rec.mesh.scale.copy(rec.initialScale);
       rec.mesh.visible = true;
+      // Re-randomize start angle so it doesn't snap back obviously
+      const newAngle = Math.random() * Math.PI * 2;
+      rec.pivot.rotation.y = newAngle;
+      rec.currentAngle = newAngle;
+      if (rec.orbitLine) {
+        rec.orbitLine.visible = this.state.showOrbitLines();
+      }
     });
 
-    // Restore skill planets
+    // Restore skill planets, but keep group hidden (skills row mode was reset)
     this.skillPlanetRecords.forEach((rec) => {
       rec.mesh.position.copy(rec.initialPos);
       rec.mesh.scale.copy(rec.initialScale);
       rec.mesh.visible = true;
     });
+    this.skillPlanetsGroup.visible = false;
 
     this.cameraService.flyToOverview();
   }
@@ -459,18 +468,27 @@ export class SolarSceneService {
         this.objects.forEach((rec) => {
           if (rec.config.type !== 'sun' && rec.mesh.scale.x > 0.02) {
             totalRemaining++;
+            // Directly orbit-spin pivot toward center, shrink mesh
             const worldPos = new THREE.Vector3();
             rec.mesh.getWorldPosition(worldPos);
-            worldPos.lerp(new THREE.Vector3(0, 0, 0), delta * 1.6);
-            rec.pivot.worldToLocal(worldPos);
-            rec.mesh.position.copy(worldPos);
+            const distToCenter = worldPos.length();
 
-            const dist = rec.mesh.position.length();
-            if (dist < 28) {
+            // Move pivot angle faster as object falls in
+            const pullStrength = Math.max(0.3, 6 / (distToCenter + 1));
+            rec.pivot.rotation.y += pullStrength * delta;
+
+            // Pull orbit distance inward by scaling the mesh's local X
+            const localX = rec.mesh.position.x;
+            if (Math.abs(localX) > 0.5) {
+              rec.mesh.position.x = localX * Math.max(0.01, 1 - delta * 1.8);
+            }
+
+            if (distToCenter < 28) {
               rec.mesh.scale.multiplyScalar(Math.max(0.01, 1 - delta * 2.8));
             }
-            if (dist < 6.0) {
+            if (distToCenter < 6.0 || rec.mesh.scale.x < 0.02) {
               rec.mesh.scale.set(0.0001, 0.0001, 0.0001);
+              rec.mesh.position.set(0, 0, 0);
             }
           }
         });
@@ -478,14 +496,21 @@ export class SolarSceneService {
         // Check if all planets are devoured
         if (totalRemaining === 0 && !this.devouredNotified) {
           this.devouredNotified = true;
+          this.blackHoleShakeIntensity = 0; // stop shake
           // Flash effect & trigger completion
           this.blackHole.photonRing.scale.multiplyScalar(1.4);
           setTimeout(() => {
             this.state.onBlackHoleCompleted();
           }, 1200);
+        } else {
+          // Increase camera shake as planets are consumed
+          const maxPlanets = this.skillPlanetRecords.size + this.objects.size - 1; // -1 for sun
+          const consumed = maxPlanets - totalRemaining;
+          this.blackHoleShakeIntensity = Math.min(1.2, (consumed / maxPlanets) * 1.5);
         }
       } else {
         // --- NORMAL ORBITAL & ROW ROTATIONS ---
+        this.blackHoleShakeIntensity = 0;
         this.objects.forEach((record) => {
           const { config, pivot, mesh, satellites, orbitLine, labelSprite } = record;
 
@@ -525,7 +550,10 @@ export class SolarSceneService {
         this.sunMesh.rotation.y += 0.002;
       }
       if (this.sunGlow) {
-        const pulse = 28 + Math.sin((now / 1000) * 2) * 1.5;
+        // Scale glow relative to camera distance: closer = smaller so it doesn't occlude
+        const camDist = this.cameraService.camera.position.length();
+        const distScale = Math.max(0.3, Math.min(1.0, (camDist - 30) / 80));
+        const pulse = (26 + Math.sin((now / 1000) * 1.8) * 1.2) * distScale;
         this.sunGlow.scale.set(pulse, pulse, 1);
       }
 
@@ -542,8 +570,19 @@ export class SolarSceneService {
       // Camera flight update
       this.cameraService.update(delta);
 
-      // Render
-      this.renderer.render(this.scene, this.cameraService.camera);
+      // Camera shake effect during black hole
+      if (this.blackHoleShakeIntensity > 0) {
+        const shake = this.blackHoleShakeIntensity;
+        const ox = (Math.random() - 0.5) * shake;
+        const oy = (Math.random() - 0.5) * shake;
+        this.cameraService.camera.position.x += ox;
+        this.cameraService.camera.position.y += oy;
+        this.renderer.render(this.scene, this.cameraService.camera);
+        this.cameraService.camera.position.x -= ox;
+        this.cameraService.camera.position.y -= oy;
+      } else {
+        this.renderer.render(this.scene, this.cameraService.camera);
+      }
     };
 
     animate();

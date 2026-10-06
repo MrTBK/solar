@@ -148,9 +148,8 @@ export class InteractionService {
           target.mesh.getWorldPosition(worldPos);
           this.cameraService.flyTo(worldPos, 14, 3, target.mesh);
         } else if (target.celestialConfig) {
+          // Select and focus on celestial body — do NOT track as "explored" for recruiter quest
           this.state.selectTarget(target.celestialConfig, true);
-          // Also mark explored if it has an id
-          this.state.explorePlanet(target.celestialConfig.id);
         }
       }
     }
@@ -198,13 +197,21 @@ export class InteractionService {
   }
 
   private onKeyDown(e: KeyboardEvent): void {
-    if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) {
+    // Ignore all keys when typing in form elements
+    const tag = (e.target as HTMLElement)?.tagName;
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) {
+      return;
+    }
+    // Ignore keyboard shortcuts during active black hole animation
+    const isModal = !!document.querySelector('[data-modal-trap]');
+    if (isModal && !['Escape', 'Home'].includes(e.key)) {
       return;
     }
 
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' || e.key === 'Home') {
       this.state.returnToSystem();
-    } else if (e.key === 'Home' || e.code === 'Space') {
+    } else if (e.code === 'Space') {
+      e.preventDefault(); // prevent page scroll
       this.state.returnToSystem();
     } else if (e.key === 'm' || e.key === 'M') {
       this.audio.toggleMute();
