@@ -4,6 +4,7 @@ import { CelestialBodyConfig } from '../../models/celestial.model';
 import { ProjectData } from '../../models/project.model';
 import { CELESTIAL_BODIES } from '../../data/celestial.data';
 import { PROJECTS_DATA } from '../../data/project.data';
+import { SKILL_PLANETS, SkillPlanetItem } from '../../data/skill.data';
 import { AudioService } from './audio.service';
 import { DeviceService } from './device.service';
 
@@ -15,6 +16,8 @@ export type ModalType =
   | 'about'
   | 'contact'
   | 'competitions'
+  | 'skill-planet'
+  | 'black-hole-contact'
   | null;
 
 @Injectable({
@@ -29,6 +32,20 @@ export class StateService {
   public selectedTarget = signal<CelestialBodyConfig | null>(null);
   public hoveredTarget = signal<CelestialBodyConfig | null>(null);
   public hoverPosition = signal<{ x: number; y: number } | null>(null);
+
+  // Skills Row Alignment Mode & Explored Planets
+  public isSkillsRowMode = signal<boolean>(false);
+  public exploredPlanets = signal<Set<string>>(new Set());
+  public activeSkillPlanet = signal<SkillPlanetItem | null>(null);
+
+  // Black Hole Cosmic Event
+  public isBlackHoleActive = signal<boolean>(false);
+  public isBlackHoleCompleted = signal<boolean>(false);
+
+  // Explored percentage and counts
+  public totalSkillPlanetsCount = SKILL_PLANETS.length;
+  public exploredCount = computed(() => this.exploredPlanets().size);
+  public allPlanetsExplored = computed(() => this.exploredCount() >= this.totalSkillPlanetsCount);
 
   // Modals & Active View
   public activeModal = signal<ModalType>(null);
@@ -204,6 +221,76 @@ export class StateService {
   public toggleLabels(): void {
     this.showLabels.set(!this.showLabels());
     this.audio.playToggle();
+  }
+
+  public toggleSkillsRowMode(): void {
+    const next = !this.isSkillsRowMode();
+    this.setSkillsRowMode(next);
+  }
+
+  public setSkillsRowMode(val: boolean): void {
+    this.isSkillsRowMode.set(val);
+    this.audio.playToggle();
+    if (val) {
+      this.closeModal();
+      this.telemetry.set({
+        targetName: 'SKILLS PLANETARY ALIGNMENT',
+        targetCategory: 'Linear Planetary Syzygy',
+        distanceAU: '0.00 AU',
+        orbitalPeriod: 'Row Locked',
+        temperature: 'Aligned Fleet'
+      });
+    } else {
+      this.returnToSystem();
+    }
+  }
+
+  public explorePlanet(id: string): void {
+    const current = new Set(this.exploredPlanets());
+    if (!current.has(id)) {
+      current.add(id);
+      this.exploredPlanets.set(current);
+      this.audio.playExplorationCheck();
+
+      // If all planets explored, trigger black hole!
+      if (current.size >= this.totalSkillPlanetsCount) {
+        setTimeout(() => {
+          this.triggerBlackHole();
+        }, 1200);
+      }
+    }
+  }
+
+  public openSkillPlanet(skillPlanet: SkillPlanetItem): void {
+    this.activeSkillPlanet.set(skillPlanet);
+    this.activeModal.set('skill-planet');
+    this.audio.playSelect();
+    this.explorePlanet(skillPlanet.id);
+  }
+
+  public triggerBlackHole(): void {
+    if (this.isBlackHoleActive()) return;
+    this.isBlackHoleActive.set(true);
+    this.isBlackHoleCompleted.set(false);
+    this.closeModal();
+    this.audio.playBlackHoleRumble();
+  }
+
+  public onBlackHoleCompleted(): void {
+    this.isBlackHoleActive.set(false);
+    this.isBlackHoleCompleted.set(true);
+    this.activeModal.set('black-hole-contact');
+    this.audio.playSelect();
+  }
+
+  public resetUniverse(): void {
+    this.isBlackHoleActive.set(false);
+    this.isBlackHoleCompleted.set(false);
+    this.exploredPlanets.set(new Set());
+    this.activeModal.set(null);
+    this.isSkillsRowMode.set(false);
+    this.audio.playBigBang();
+    this.returnToSystem();
   }
 
   private updateTelemetry(body: CelestialBodyConfig): void {

@@ -8,64 +8,61 @@ This document contains the complete codebase and technical specification for
 the 3D Interactive Solar System Portfolio of Mohamed Aziz Tabakh (MrTBK).
 Technologies: Angular 22+, TypeScript, Three.js, WebGL, Tailwind CSS.
 
-CONCEPT:
-The entire portfolio is engineered as an interactive 3D solar system:
-- Central Sun: Mohamed Aziz Tabakh (System Core)
-- Project Planets:
-  * DataForge (Data Engineering: Python, PostgreSQL, dbt, Airflow, Docker)
-  * Customer360 (BI & Cohort Analytics: SQL, Python, Power BI, Kimball DWH)
-  * SupplyChainIQ (Logistics Intelligence & Predictive Delays)
-  * ChurnLab (MLOps & Customer Retention Platform)
-  * Masroufi (Privacy-First Offline Mobile Budgeting App)
-- Enterprise Station: Coficab Group (Summer Internship Mission & AI Chatbot)
-- Embedded System: Robotics Planet (Arduino, ESP8266, Mecanum, Obstacle Car)
-- Algorithmic Ring: Asteroid Belt (TCPC 32/100, Monopoly Hackathon 1st Place)
-- Academia Orbital: Higher Education (ESEN BI Degree & Baccalauréat)
+NEW ENHANCEMENTS:
+- Skills as Individual Planets in a Horizontal Row Alignment
+- Recruiter Exploration Scanner HUD (tracks checked planets)
+- Gravitational Black Hole Singularity Event (eats all planets)
+- Final Contact Terminal revealing Aziz's communication channels
+- Big Bang Cosmic Rebirth button to restore the solar system
 
 TABLE OF CONTENTS:
   01. README.md
-  02. package.json
-  03. angular.json
-  04. tsconfig.json
-  05. tsconfig.app.json
-  06. src/index.html
-  07. src/styles.css
-  08. src/main.ts
-  09. src/app/app.config.ts
-  10. src/app/app.routes.ts
-  11. src/app/app.ts
-  12. src/app/app.html
-  13. src/app/app.css
-  14. src/app/models/celestial.model.ts
-  15. src/app/models/project.model.ts
-  16. src/app/data/portfolio.config.ts
-  17. src/app/data/celestial.data.ts
-  18. src/app/data/project.data.ts
-  19. src/app/data/skill.data.ts
-  20. src/app/data/experience.data.ts
-  21. src/app/data/education.data.ts
-  22. src/app/data/competition.data.ts
-  23. src/app/data/social.data.ts
-  24. src/app/core/services/audio.service.ts
-  25. src/app/core/services/device.service.ts
-  26. src/app/core/services/state.service.ts
-  27. src/app/core/services/celestial-factory.service.ts
-  28. src/app/core/services/camera.service.ts
-  29. src/app/core/services/solar-scene.service.ts
-  30. src/app/core/services/interaction.service.ts
-  31. src/app/components/canvas-scene/canvas-scene.component.ts
-  32. src/app/components/hover-tooltip/hover-tooltip.component.ts
-  33. src/app/components/hud-nav/hud-nav.component.ts
-  34. src/app/components/mission-control/mission-control.component.ts
-  35. src/app/components/project-modal/project-modal.component.ts
-  36. src/app/components/cinematic-intro/cinematic-intro.component.ts
-  37. src/app/components/views/about-modal/about-modal.component.ts
-  38. src/app/components/views/skills-modal/skills-modal.component.ts
-  39. src/app/components/views/experience-modal/experience-modal.component.ts
-  40. src/app/components/views/education-modal/education-modal.component.ts
-  41. src/app/components/views/competitions-modal/competitions-modal.component.ts
-  42. src/app/components/views/contact-modal/contact-modal.component.ts
-  43. src/app/components/views/fallback-2d/fallback-2d.component.ts
+  02. project_description.txt
+  03. package.json
+  04. angular.json
+  05. tsconfig.json
+  06. tsconfig.app.json
+  07. src/index.html
+  08. src/styles.css
+  09. src/main.ts
+  10. src/app/app.config.ts
+  11. src/app/app.routes.ts
+  12. src/app/app.ts
+  13. src/app/app.html
+  14. src/app/app.css
+  15. src/app/models/celestial.model.ts
+  16. src/app/models/project.model.ts
+  17. src/app/data/portfolio.config.ts
+  18. src/app/data/celestial.data.ts
+  19. src/app/data/project.data.ts
+  20. src/app/data/skill.data.ts
+  21. src/app/data/experience.data.ts
+  22. src/app/data/education.data.ts
+  23. src/app/data/competition.data.ts
+  24. src/app/data/social.data.ts
+  25. src/app/core/services/audio.service.ts
+  26. src/app/core/services/device.service.ts
+  27. src/app/core/services/state.service.ts
+  28. src/app/core/services/celestial-factory.service.ts
+  29. src/app/core/services/camera.service.ts
+  30. src/app/core/services/solar-scene.service.ts
+  31. src/app/core/services/interaction.service.ts
+  32. src/app/components/canvas-scene/canvas-scene.component.ts
+  33. src/app/components/hover-tooltip/hover-tooltip.component.ts
+  34. src/app/components/hud-nav/hud-nav.component.ts
+  35. src/app/components/mission-control/mission-control.component.ts
+  36. src/app/components/recruiter-tracker/recruiter-tracker.component.ts
+  37. src/app/components/project-modal/project-modal.component.ts
+  38. src/app/components/cinematic-intro/cinematic-intro.component.ts
+  39. src/app/components/views/skill-planet-modal/skill-planet-modal.component.ts
+  40. src/app/components/views/black-hole-contact/black-hole-contact.component.ts
+  41. src/app/components/views/about-modal/about-modal.component.ts
+  42. src/app/components/views/skills-modal/skills-modal.component.ts
+  43. src/app/components/views/experience-modal/experience-modal.component.ts
+  44. src/app/components/views/education-modal/education-modal.component.ts
+  45. src/app/components/views/competitions-modal/competitions-modal.component.ts
+  46. src/app/components/views/contact-modal/contact-modal.component.ts
+  47. src/app/components/views/fallback-2d/fallback-2d.component.ts
 
 ================================================================================
 
@@ -132,6 +129,227 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+================================================================================
+FILE: project_description.txt
+================================================================================
+
+================================================================================
+          MOHAMED AZIZ TABAKH — INTERACTIVE 3D SOLAR SYSTEM PORTFOLIO
+                      TECHNICAL ARCHITECTURE & CODE OVERVIEW
+================================================================================
+
+1. EXECUTIVE SUMMARY & DESIGN PHILOSOPHY
+--------------------------------------------------------------------------------
+The application is a production-grade personal portfolio engineered for
+Mohamed Aziz Tabakh (Business Intelligence Student, Data Developer, Competitive
+Programmer, and Robotics Trainer).
+
+Rather than embedding a 3D canvas behind a standard web page, the entire
+portfolio is conceptualized as an interactive 3D solar system inspired by
+the exploration mechanics of Solar System Scope. The 3D universe is the primary
+navigation interface:
+- The Sun represents Mohamed Aziz Tabakh (System Core & Identity).
+- Major engineering projects are distinct, interactive planets.
+- Technical skills and sub-systems are represented as moons and satellites.
+- Professional missions and academic institutions are modular orbital stations.
+- Competitive programming achievements form a dense algorithmic asteroid belt.
+
+Visual Theme:
+"NASA Mission Control meets Modern Data Engineering and Premium 3D Graphics"
+- Dark space aesthetic (#030712 deep navy background).
+- Restrained cyan and electric blue accents, warm gold core for the Sun.
+- Procedural textures generated directly via HTML5 2D Canvas shaders in memory,
+  eliminating texture download delays and network failures.
+- Zero audio asset dependencies: sounds are generated in real-time via the
+  Web Audio API synthesizer.
+
+
+2. TECHNICAL ARCHITECTURE & COMPONENT SEPARATION
+--------------------------------------------------------------------------------
+The codebase strictly adheres to modular software engineering principles,
+decoupling Three.js scene management from Angular UI overlays and data schemas:
+
+src/app/
+├── core/
+│   └── services/
+│       ├── solar-scene.service.ts        # Three.js scene, renderer, lighting & loop
+│       ├── camera.service.ts             # Camera flight interpolation & OrbitControls
+│       ├── celestial-factory.service.ts  # In-memory textures, meshes, shaders, satellites
+│       ├── interaction.service.ts        # Pointer raycasting, hover highlights & keys
+│       ├── audio.service.ts              # Web Audio API procedural sound synthesizer
+│       ├── device.service.ts             # Mobile detection, WebGL capability, DPR scaling
+│       └── state.service.ts              # Angular Signals single source of truth
+├── data/
+│   ├── portfolio.config.ts               # Core bio, mission directive, stats, coordinates
+│   ├── project.data.ts                   # Complete structured metadata for all projects
+│   ├── celestial.data.ts                 # 3D orbital radii, velocities, textures, rings
+│   ├── skill.data.ts                     # Skills matrix (Programming, BI/DWH, Web, Robotics)
+│   ├── experience.data.ts                # Coficab, Youth Yes We Care, ESEN HiVE, IEEE
+│   ├── education.data.ts                 # ESEN BI degree, Baccalauréat, IBM cert
+│   ├── competition.data.ts               # TCPC, Monopoly Hackathon, Bee Battle photos
+│   └── social.data.ts                    # GitHub @MrTBK, LinkedIn, Email, Phone, CV
+├── models/
+│   ├── celestial.model.ts                # TypeScript interfaces for celestial bodies
+│   └── project.model.ts                  # TypeScript interfaces for projects & metrics
+├── components/
+│   ├── canvas-scene/                     # WebGL canvas wrapper with resize observer
+│   ├── hover-tooltip/                    # 3D screen-projected HUD tooltip
+│   ├── hud-nav/                          # Mission control top HUD navigation bar
+│   ├── mission-control/                  # Expandable telemetry drawer & orbital radar
+│   ├── project-modal/                    # Slide-out project drawer with preview photos
+│   ├── cinematic-intro/                  # High-tech initial launch calibration HUD
+│   └── views/
+│       ├── about-modal/                  # Personal mission profile with portrait & stats
+│       ├── skills-modal/                 # Categorized capabilities constellation matrix
+│       ├── experience-modal/             # Professional career expedition timeline
+│       ├── education-modal/              # University & high school degrees & certs
+│       ├── competitions-modal/           # Contest photo gallery & honors
+│       ├── contact-modal/                # Communication channels & clipboard copy
+│       └── fallback-2d/                  # Full accessible 2D schematic mode
+└── app.ts / app.html / app.routes.ts     # Root shell & route synchronization
+
+
+3. DEEP DIVE: CORE THREE.JS & ANGULAR SERVICES
+--------------------------------------------------------------------------------
+
+A. CelestialFactoryService (celestial-factory.service.ts)
+---------------------------------------------------------
+Generates all 3D geometries, procedural canvas textures, and atmospheric shaders:
+- createSunTexture(): Produces a 1024x1024 fiery radial gradient layered with
+  400 procedural plasma flare granulations and sunspots.
+- createSunGlowSprite(): An additive-blended radial flare sprite creating the
+  Sun's pulsating coronal atmosphere.
+- createPlanetTexture(type, baseHex): Dynamically generates unique surfaces:
+  * "industrial" (DataForge): Dark slate bands, copper circuits, and pipeline traces.
+  * "analytics" (Customer360): Sapphire continents with cyan coordinate grid lines.
+  * "logistics" (SupplyChainIQ): Emerald landmasses with glowing shipping routes.
+  * "mlops" (ChurnLab): Violet nebula gradients with illuminated neural synapses.
+  * "finance" (Masroufi): Deep teal surface with golden latitude ledger rings.
+  * "robotics" (Robotics): Burnt-orange modular mechanical plates and circuit traces.
+  * "rock" (Asteroids): Craggy slate surface with impact crater shadows.
+- createAtmosphereGlow(): Custom vertex/fragment ShaderMaterial implementing a
+  Fresnel rim glow based on the view vector and surface normals.
+- createSatelliteGroup(): Builds miniature satellites with metallic chassis,
+  photovoltaic solar panels, blinking LED beacons, and orbital trace paths.
+- createCoficabStationMesh(): Enterprise station model featuring a central
+  cylindrical core, rotating docking ring, two solar array wings, and dish.
+- createEducationStationMesh(): Gyroscopic orbital academy with an octahedral
+  crystal core surrounded by dual rotating metallic rings.
+- createAsteroidBelt(): InstancedMesh rendering 350+ randomized dodecahedral
+  rocks, punctuated by 4 major glowing crystal landmarks (TCPC, Monopoly, etc.).
+- createLabelSprite(): Camera-facing 2D canvas sprite rendering the body name
+  and category in high-contrast HUD styling.
+
+B. CameraService (camera.service.ts)
+------------------------------------
+Controls perspective, user interaction, and cinematic flight interpolation:
+- Uses Three.js PerspectiveCamera and OrbitControls with smooth damping (factor: 0.05).
+- flyTo(targetPosition, distance, elevation, trackedObj): Initiates a smooth
+  quaternion and position transition using a cubic ease-in-out curve (easeInOutCubic).
+- Dynamic Orbital Tracking: Once the camera arrives at a target planet, it locks
+  onto the planet's world coordinates and smoothly tracks it in real-time as the
+  planet continues orbiting the Sun.
+- flyToOverview(): Smoothly restores the default overhead system angle (0, 75, 120)
+  looking at the Sun (0, 0, 0).
+- Clamps polar angles to prevent flipping underneath the system floor.
+
+C. SolarSceneService (solar-scene.service.ts)
+--------------------------------------------
+Orchestrates the WebGL rendering pipeline:
+- WebGLRenderer with ACESFilmicToneMapping and exposure calibration (1.25).
+- Adaptive resolution: Limits device pixel ratio to 1.5 on mobile and 2.0 on desktop.
+- Multi-spectral Starfield: 6,000 celestial points randomized across white, cyan,
+  amber, and purple stellar spectra with exponential fog depth.
+- Lighting System: A central PointLight inside the Sun radiating across planets,
+  paired with AmbientLight (0x1e293b) and an elevated DirectionalLight rim fill.
+- Central Animation Loop (requestAnimationFrame):
+  * Advances orbital pivots according to state.orbitSpeedMultiplier().
+  * Updates planetary self-rotations.
+  * Updates satellite and moon revolutions around parent planets.
+  * Pulses the Sun's coronal glow.
+  * Drifts the asteroid belt and starfield.
+  * Updates camera interpolation and renders the scene.
+
+D. InteractionService (interaction.service.ts)
+----------------------------------------------
+Handles user input, raycasting, and coordinate projection:
+- Tracks pointer coordinates and raycasts against solarScene.interactiveMeshes.
+- Drag vs. Click Discrimination: Compares pointer-down and pointer-up distance;
+  if the movement is under 6 pixels, it triggers an object inspection click.
+- Hover Effects: Smoothly scales hovered bodies up by 8%, boosts emissive
+  illumination, switches the cursor to pointer, and calculates 2D screen coordinates
+  via worldPos.project(camera) to position the floating HUD tooltip.
+- Keyboard Navigation:
+  * ESC / Home / Space: Return to system overview / close modal.
+  * 1 through 9: Direct jump to specific celestial bodies.
+  * T: Toggle orbital path lines.
+  * L: Toggle 3D planet labels.
+  * M: Toggle audio sound effects.
+
+E. AudioService (audio.service.ts)
+----------------------------------
+Pure Web Audio API procedural sound synthesizer:
+- 0 audio files to download: runs entirely in real-time via oscillator nodes.
+- playHover(): Rapid sine sweep (880Hz to 1320Hz, 60ms) for celestial hover blips.
+- playSelect(): Futuristic two-tone harmonic ping (523Hz & 784Hz) on lock-on.
+- playFly(): Low-frequency triangle wave sweep (140Hz to 420Hz) simulating a thruster whoosh.
+- playToggle() & playClose(): Subtle acoustic clicks and dismissals.
+- Persists user mute preference in localStorage ('solar_audio_muted').
+
+F. StateService (state.service.ts)
+----------------------------------
+Central reactive state manager powered by Angular Signals:
+- selectedTarget & hoveredTarget signals for active celestial bodies.
+- activeModal signal ('project', 'about', 'skills', 'experience', 'education', etc.).
+- activeProject computed signal resolving metadata from PROJECTS_DATA.
+- Telemetry signal providing live sector focus, AU distance, and core temperature.
+- Speed multiplier signal (0x, 1x, 2x, 5x) and layer toggles (orbits, labels).
+- Deep-links and syncs state with Angular Router.
+
+G. DeviceService (device.service.ts)
+------------------------------------
+Detects mobile screens (<768px), tablets, and hardware concurrency limits.
+Checks WebGL context availability; if unavailable, seamlessly defaults to
+the accessible 2D Schematic mode.
+
+
+4. USER INTERFACE OVERLAYS & VIEWS
+--------------------------------------------------------------------------------
+1. CinematicIntroComponent: High-tech bootloader showing "MOHAMED AZIZ TABAKH",
+   his core roles, and a simulated calibration progress bar before diving into 3D.
+2. HudNavComponent: Minimal top HUD with active system indicators, direct view
+   links (Skills, Experience, Honors, Education, About, Contact), HUD toggle,
+   audio mute button, 2D/3D mode switch, and direct CV download button.
+3. MissionControlComponent: Spacecraft telemetry console showing real-time AU
+   distances, simulation speed toggles, layer visibility controls, and a radar jump list.
+4. ProjectModalComponent: Responsive slide-out drawer (bottom-sheet on mobile)
+   displaying project screenshots, Kimball star-schema details, pipeline
+   architecture flows, metrics, tech stack pills, and GitHub source links.
+5. Modal Views:
+   - AboutModalComponent: Profile photo, mission directive, stats, coordinates.
+   - SkillsModalComponent: Categorized capability constellation matrix.
+   - ExperienceModalComponent: Career expeditions (Coficab, Youth Yes We Care, etc.).
+   - EducationModalComponent: ESEN BI degree, Baccalauréat, and IBM certs.
+   - CompetitionsModalComponent: High-res photo gallery of hackathons and ICPC qualifiers.
+   - ContactModalComponent: One-click clipboard copy for email, LinkedIn, phone, CV.
+6. Fallback2DComponent: Complete accessible 2D schematic system allowing full
+   exploration on devices without WebGL support.
+
+
+5. DATA ARCHITECTURE
+--------------------------------------------------------------------------------
+All personal, project, skill, and celestial attributes are decoupled into
+centralized TypeScript data structures:
+- project.data.ts: Authentic specifications for DataForge, Customer360,
+  SupplyChainIQ, ChurnLab, Masroufi, Coficab, Robotics, MaintIQ, SalesPulse.
+- celestial.data.ts: 3D orbit radii, rotation velocities, colors, and satellites.
+- skill.data.ts: Structured skill categories without arbitrary percentage bars.
+- experience.data.ts & education.data.ts: Verified academic and industry roles.
+- competition.data.ts: TCPC (32/100 National), Monopoly Hackathon (1st Place), etc.
+- social.data.ts: GitHub (@MrTBK), LinkedIn, email, phone, and resume.pdf.
+================================================================================
 
 
 ================================================================================
@@ -469,6 +687,9 @@ import { CompetitionsModalComponent } from './components/views/competitions-moda
 import { ContactModalComponent } from './components/views/contact-modal/contact-modal.component';
 import { Fallback2DComponent } from './components/views/fallback-2d/fallback-2d.component';
 import { CinematicIntroComponent } from './components/cinematic-intro/cinematic-intro.component';
+import { RecruiterTrackerComponent } from './components/recruiter-tracker/recruiter-tracker.component';
+import { SkillPlanetModalComponent } from './components/views/skill-planet-modal/skill-planet-modal.component';
+import { BlackHoleContactComponent } from './components/views/black-hole-contact/black-hole-contact.component';
 
 @Component({
   selector: 'app-root',
@@ -486,7 +707,10 @@ import { CinematicIntroComponent } from './components/cinematic-intro/cinematic-
     CompetitionsModalComponent,
     ContactModalComponent,
     Fallback2DComponent,
-    CinematicIntroComponent
+    CinematicIntroComponent,
+    RecruiterTrackerComponent,
+    SkillPlanetModalComponent,
+    BlackHoleContactComponent
   ],
   templateUrl: './app.html'
 })
@@ -598,9 +822,22 @@ FILE: src/app/app.html
     </div>
   }
 
+  <!-- Recruiter Quest Tracker HUD -->
+  @if (!is2DMode()) {
+    <app-recruiter-tracker />
+  }
+
   <!-- Modals & Views -->
   @if (activeModal() === 'project') {
     <app-project-modal />
+  }
+
+  @if (activeModal() === 'skill-planet') {
+    <app-skill-planet-modal />
+  }
+
+  @if (activeModal() === 'black-hole-contact') {
+    <app-black-hole-contact />
   }
 
   @if (activeModal() === 'about') {
@@ -1549,6 +1786,130 @@ export const SKILLS_DATA: SkillCategory[] = [
   }
 ];
 
+export interface SkillPlanetItem {
+  id: string;
+  name: string;
+  category: string;
+  tagline: string;
+  color: string;
+  emissiveColor: string;
+  textureType: 'industrial' | 'analytics' | 'logistics' | 'mlops' | 'robotics' | 'finance';
+  radius: number;
+  rowX: number; // horizontal placement along X axis (-50 to +50)
+  skills: { name: string; level: string; detail?: string }[];
+  highlight: string;
+}
+
+export const SKILL_PLANETS: SkillPlanetItem[] = [
+  {
+    id: 'skill-python',
+    name: 'PYTHON & DATA PIPELINES',
+    category: 'Data Engineering',
+    tagline: 'Batch ETL, dbt Modeling, Automated Quarantine & Airflow',
+    color: '#38bdf8',
+    emissiveColor: '#0284c7',
+    textureType: 'industrial',
+    radius: 3.2,
+    rowX: -50,
+    highlight: 'ETL Pipelines, dbt transformations, PostgreSQL staging, and Airflow orchestration.',
+    skills: [
+      { name: 'Python', level: 'Advanced', detail: 'Pandas, NumPy, Scikit-Learn, Pygame' },
+      { name: 'dbt Core', level: 'Proficient', detail: 'Star schema models, automated assertions' },
+      { name: 'Apache Airflow', level: 'Proficient', detail: 'DAG scheduling and error retry logic' },
+      { name: 'PostgreSQL', level: 'Advanced', detail: 'Analytical indexing, quarantine tables' }
+    ]
+  },
+  {
+    id: 'skill-bi',
+    name: 'BUSINESS INTELLIGENCE & DWH',
+    category: 'Analytics & Decision Systems',
+    tagline: 'Kimball Dimensional Warehouses, Power BI & SSIS',
+    color: '#fbbf24',
+    emissiveColor: '#d97706',
+    textureType: 'analytics',
+    radius: 3.5,
+    rowX: -30,
+    highlight: 'Enterprise dimensional modeling, DAX performance measures, and multi-source ETL reconciliation.',
+    skills: [
+      { name: 'Power BI', level: 'Advanced', detail: 'DAX measures, interactive executive reports' },
+      { name: 'Data Warehousing', level: 'Advanced', detail: 'Kimball star schemas, Fact/Dim design' },
+      { name: 'Microsoft SQL Server', level: 'Advanced', detail: 'SSMS, SSIS data flows, T-SQL' },
+      { name: 'Data Quality Zone', level: 'Advanced', detail: 'Zero-loss quarantine validation' }
+    ]
+  },
+  {
+    id: 'skill-algorithms',
+    name: 'C++ & ALGORITHMIC SOLVING',
+    category: 'Competitive Programming',
+    tagline: 'Codeforces Specialist, TCPC National Finalist, Graph Theory',
+    color: '#a855f7',
+    emissiveColor: '#7e22ce',
+    textureType: 'mlops',
+    radius: 3.0,
+    rowX: -10,
+    highlight: 'High-speed algorithmic analysis, complex data structures, and ICPC tournament problem decomposition in C++.',
+    skills: [
+      { name: 'C++ (STL)', level: 'Advanced', detail: 'High performance O(NlogN) optimizations' },
+      { name: 'Codeforces Specialist', level: 'Specialist Rank', detail: '200+ solved algorithmic challenges' },
+      { name: 'TCPC Finalist', level: 'Rank 32/100', detail: 'Tunisian Collegiate Programming Contest' },
+      { name: 'Monopoly Hackathon', level: '1st Place', detail: 'TBS Innovation Champion 2026' }
+    ]
+  },
+  {
+    id: 'skill-web',
+    name: 'FULL-STACK & CLOUD SYSTEMS',
+    category: 'Modern Web Engineering',
+    tagline: 'Angular 22, FastAPI Asynchronous APIs, Flask & Docker',
+    color: '#34d399',
+    emissiveColor: '#059669',
+    textureType: 'logistics',
+    radius: 3.1,
+    rowX: 10,
+    highlight: 'Modern reactive frontend architectures, asynchronous microservices, and Docker containerization.',
+    skills: [
+      { name: 'Angular (v17-22+)', level: 'Advanced', detail: 'Standalone signals, Three.js integration' },
+      { name: 'FastAPI', level: 'Proficient', detail: 'Async endpoints, Pydantic data schemas' },
+      { name: 'Flask', level: 'Proficient', detail: 'Enterprise file management & microservices' },
+      { name: 'Docker & Linux', level: 'Proficient', detail: 'Compose networks, Bash automation' }
+    ]
+  },
+  {
+    id: 'skill-robotics',
+    name: 'ROBOTICS & EMBEDDED IoT',
+    category: 'Hardware & Microcontrollers',
+    tagline: 'Arduino, ESP8266, Autonomous Logic, Youth Mentorship',
+    color: '#f97316',
+    emissiveColor: '#ea580c',
+    textureType: 'robotics',
+    radius: 2.9,
+    rowX: 30,
+    highlight: 'Motor controllers, ultrasonic pathfinding, Bluetooth wireless protocols, and hands-on youth engineering training.',
+    skills: [
+      { name: 'Arduino Hardware', level: 'Advanced', detail: 'Motor drivers, sensors, PWM control' },
+      { name: 'ESP8266 & IoT', level: 'Proficient', detail: 'Wireless serial & telemetry' },
+      { name: 'Robotics Trainer', level: 'Lead Trainer', detail: 'Youth Yes We Care Association mentor' },
+      { name: 'Circuits & Schematics', level: 'Proficient', detail: 'Breadboard prototyping, H-Bridges' }
+    ]
+  },
+  {
+    id: 'skill-mobile',
+    name: 'MOBILE & OFFLINE ARCHITECTURE',
+    category: 'Mobile Application',
+    tagline: 'Flutter Cross-Platform, SQLite Local Storage, RTL/LTR',
+    color: '#2dd4bf',
+    emissiveColor: '#0d9488',
+    textureType: 'finance',
+    radius: 2.7,
+    rowX: 50,
+    highlight: 'Zero-cloud offline-first architectures, encrypted local SQLite persistence, and multilingual Arabic/English layouts.',
+    skills: [
+      { name: 'Flutter & Dart', level: 'Proficient', detail: 'Cross-platform reactive UI architecture' },
+      { name: 'SQLite Storage', level: 'Proficient', detail: 'Zero-latency local database persistence' },
+      { name: 'Multilingual i18n', level: 'Advanced', detail: 'Native Arabic RTL, French, English' }
+    ]
+  }
+];
+
 
 ================================================================================
 FILE: src/app/data/experience.data.ts
@@ -2044,6 +2405,113 @@ export class AudioService {
       osc.stop(now + 0.04);
     } catch {}
   }
+
+  public playExplorationCheck(): void {
+    if (this.isMuted()) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      [587.33, 880, 1174.66].forEach((f, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, now + idx * 0.06);
+        gain.gain.setValueAtTime(0.04, now + idx * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.06 + 0.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + idx * 0.06);
+        osc.stop(now + idx * 0.06 + 0.2);
+      });
+    } catch {}
+  }
+
+  public playBlackHoleRumble(): void {
+    if (this.isMuted()) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const sub = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(90, now);
+      osc.frequency.exponentialRampToValueAtTime(28, now + 3.0);
+
+      sub.type = 'sine';
+      sub.frequency.setValueAtTime(55, now);
+      sub.frequency.exponentialRampToValueAtTime(20, now + 3.0);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.08, now + 0.8);
+      gain.gain.linearRampToValueAtTime(0.06, now + 2.5);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 4.0);
+
+      osc.connect(gain);
+      sub.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      sub.start(now);
+      osc.stop(now + 4.0);
+      sub.stop(now + 4.0);
+    } catch {}
+  }
+
+  public playAccretionChime(): void {
+    if (this.isMuted()) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(300, now + 0.15);
+
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.15);
+    } catch {}
+  }
+
+  public playBigBang(): void {
+    if (this.isMuted()) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(40, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.4);
+
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.9);
+    } catch {}
+  }
 }
 
 
@@ -2130,6 +2598,7 @@ import { CelestialBodyConfig } from '../../models/celestial.model';
 import { ProjectData } from '../../models/project.model';
 import { CELESTIAL_BODIES } from '../../data/celestial.data';
 import { PROJECTS_DATA } from '../../data/project.data';
+import { SKILL_PLANETS, SkillPlanetItem } from '../../data/skill.data';
 import { AudioService } from './audio.service';
 import { DeviceService } from './device.service';
 
@@ -2141,6 +2610,8 @@ export type ModalType =
   | 'about'
   | 'contact'
   | 'competitions'
+  | 'skill-planet'
+  | 'black-hole-contact'
   | null;
 
 @Injectable({
@@ -2155,6 +2626,20 @@ export class StateService {
   public selectedTarget = signal<CelestialBodyConfig | null>(null);
   public hoveredTarget = signal<CelestialBodyConfig | null>(null);
   public hoverPosition = signal<{ x: number; y: number } | null>(null);
+
+  // Skills Row Alignment Mode & Explored Planets
+  public isSkillsRowMode = signal<boolean>(false);
+  public exploredPlanets = signal<Set<string>>(new Set());
+  public activeSkillPlanet = signal<SkillPlanetItem | null>(null);
+
+  // Black Hole Cosmic Event
+  public isBlackHoleActive = signal<boolean>(false);
+  public isBlackHoleCompleted = signal<boolean>(false);
+
+  // Explored percentage and counts
+  public totalSkillPlanetsCount = SKILL_PLANETS.length;
+  public exploredCount = computed(() => this.exploredPlanets().size);
+  public allPlanetsExplored = computed(() => this.exploredCount() >= this.totalSkillPlanetsCount);
 
   // Modals & Active View
   public activeModal = signal<ModalType>(null);
@@ -2330,6 +2815,76 @@ export class StateService {
   public toggleLabels(): void {
     this.showLabels.set(!this.showLabels());
     this.audio.playToggle();
+  }
+
+  public toggleSkillsRowMode(): void {
+    const next = !this.isSkillsRowMode();
+    this.setSkillsRowMode(next);
+  }
+
+  public setSkillsRowMode(val: boolean): void {
+    this.isSkillsRowMode.set(val);
+    this.audio.playToggle();
+    if (val) {
+      this.closeModal();
+      this.telemetry.set({
+        targetName: 'SKILLS PLANETARY ALIGNMENT',
+        targetCategory: 'Linear Planetary Syzygy',
+        distanceAU: '0.00 AU',
+        orbitalPeriod: 'Row Locked',
+        temperature: 'Aligned Fleet'
+      });
+    } else {
+      this.returnToSystem();
+    }
+  }
+
+  public explorePlanet(id: string): void {
+    const current = new Set(this.exploredPlanets());
+    if (!current.has(id)) {
+      current.add(id);
+      this.exploredPlanets.set(current);
+      this.audio.playExplorationCheck();
+
+      // If all planets explored, trigger black hole!
+      if (current.size >= this.totalSkillPlanetsCount) {
+        setTimeout(() => {
+          this.triggerBlackHole();
+        }, 1200);
+      }
+    }
+  }
+
+  public openSkillPlanet(skillPlanet: SkillPlanetItem): void {
+    this.activeSkillPlanet.set(skillPlanet);
+    this.activeModal.set('skill-planet');
+    this.audio.playSelect();
+    this.explorePlanet(skillPlanet.id);
+  }
+
+  public triggerBlackHole(): void {
+    if (this.isBlackHoleActive()) return;
+    this.isBlackHoleActive.set(true);
+    this.isBlackHoleCompleted.set(false);
+    this.closeModal();
+    this.audio.playBlackHoleRumble();
+  }
+
+  public onBlackHoleCompleted(): void {
+    this.isBlackHoleActive.set(false);
+    this.isBlackHoleCompleted.set(true);
+    this.activeModal.set('black-hole-contact');
+    this.audio.playSelect();
+  }
+
+  public resetUniverse(): void {
+    this.isBlackHoleActive.set(false);
+    this.isBlackHoleCompleted.set(false);
+    this.exploredPlanets.set(new Set());
+    this.activeModal.set(null);
+    this.isSkillsRowMode.set(false);
+    this.audio.playBigBang();
+    this.returnToSystem();
   }
 
   private updateTelemetry(body: CelestialBodyConfig): void {
@@ -2997,7 +3552,150 @@ export class CelestialFactoryService {
     sprite.scale.set(6, 1.5, 1);
     return sprite;
   }
+
+  // --- BLACK HOLE SINGULARITY & ACCRETION DISK ---
+
+  public createBlackHoleGroup(): {
+    group: THREE.Group;
+    horizon: THREE.Mesh;
+    accretionDisk: THREE.Mesh;
+    photonRing: THREE.Mesh;
+    particles: THREE.Points;
+  } {
+    const group = new THREE.Group();
+
+    // 1. Event Horizon: Pure unreflective pitch-black void
+    const horizonGeo = new THREE.SphereGeometry(6.0, 48, 48);
+    const horizonMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const horizon = new THREE.Mesh(horizonGeo, horizonMat);
+    group.add(horizon);
+
+    // 2. Photon Ring: Intense glowing border around the event horizon
+    const photonRingGeo = new THREE.TorusGeometry(6.2, 0.22, 16, 64);
+    const photonRingMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.95
+    });
+    const photonRing = new THREE.Mesh(photonRingGeo, photonRingMat);
+    photonRing.rotation.x = Math.PI / 2;
+    group.add(photonRing);
+
+    // 3. Accretion Disk Canvas Texture (Swirling relativistic vortex)
+    const size = 512;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d')!;
+
+    // Draw multi-color swirling spiral vortex
+    const cx = size / 2;
+    const cy = size / 2;
+    const grad = ctx.createRadialGradient(cx, cy, 50, cx, cy, cx);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.15, '#f59e0b');
+    grad.addColorStop(0.4, '#ef4444');
+    grad.addColorStop(0.7, '#8b5cf6');
+    grad.addColorStop(0.9, '#38bdf8');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+
+    // Spiral accretion arms
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 2.5;
+    for (let i = 0; i < 40; i++) {
+      ctx.beginPath();
+      const angle = (i / 40) * Math.PI * 2;
+      for (let r = 60; r < cx; r += 6) {
+        const a = angle + r * 0.04;
+        const px = cx + Math.cos(a) * r;
+        const py = cy + Math.sin(a) * r;
+        if (r === 60) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+
+    const diskTex = new THREE.CanvasTexture(canvas);
+    diskTex.wrapS = THREE.RepeatWrapping;
+    diskTex.wrapT = THREE.RepeatWrapping;
+
+    const accretionGeo = new THREE.RingGeometry(6.2, 28.0, 64);
+    const accretionMat = new THREE.MeshBasicMaterial({
+      map: diskTex,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const accretionDisk = new THREE.Mesh(accretionGeo, accretionMat);
+    accretionDisk.rotation.x = Math.PI / 2;
+    group.add(accretionDisk);
+
+    // 4. Slender Relativistic Jets (North and South poles)
+    const jetGeo = new THREE.CylinderGeometry(0.1, 1.8, 45, 16);
+    const jetMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const jetNorth = new THREE.Mesh(jetGeo, jetMat);
+    jetNorth.position.y = 22;
+    group.add(jetNorth);
+
+    const jetSouth = new THREE.Mesh(jetGeo, jetMat);
+    jetSouth.position.y = -22;
+    group.add(jetSouth);
+
+    // 5. Inward Swirling Vortex Particles
+    const pCount = 800;
+    const pGeo = new THREE.BufferGeometry();
+    const pPos = new Float32Array(pCount * 3);
+    const pCol = new Float32Array(pCount * 3);
+    const c1 = new THREE.Color(0xf59e0b);
+    const c2 = new THREE.Color(0x38bdf8);
+
+    for (let i = 0; i < pCount; i++) {
+      const radius = 6.5 + Math.random() * 32;
+      const angle = Math.random() * Math.PI * 2;
+      const y = (Math.random() - 0.5) * 1.5;
+
+      pPos[i * 3] = Math.cos(angle) * radius;
+      pPos[i * 3 + 1] = y;
+      pPos[i * 3 + 2] = Math.sin(angle) * radius;
+
+      const c = Math.random() > 0.5 ? c1 : c2;
+      pCol[i * 3] = c.r;
+      pCol[i * 3 + 1] = c.g;
+      pCol[i * 3 + 2] = c.b;
+    }
+
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+
+    const pMat = new THREE.PointsMaterial({
+      size: 1.6,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const particles = new THREE.Points(pGeo, pMat);
+    group.add(particles);
+
+    // Start with scale 0 (hidden until triggered)
+    group.scale.set(0.001, 0.001, 0.001);
+    group.visible = false;
+
+    return { group, horizon, accretionDisk, photonRing, particles };
+  }
 }
+
 
 
 ================================================================================
@@ -3143,10 +3841,11 @@ export class CameraService {
 FILE: src/app/core/services/solar-scene.service.ts
 ================================================================================
 
-import { Injectable, inject } from '@angular/core';
+import { Injectable, effect, inject } from '@angular/core';
 import * as THREE from 'three';
 import { CelestialBodyConfig } from '../../models/celestial.model';
 import { CELESTIAL_BODIES } from '../../data/celestial.data';
+import { SKILL_PLANETS, SkillPlanetItem } from '../../data/skill.data';
 import { CelestialFactoryService } from './celestial-factory.service';
 import { CameraService } from './camera.service';
 import { DeviceService } from './device.service';
@@ -3161,6 +3860,17 @@ export interface SceneObjectRecord {
   currentAngle: number;
   satellites: { group: THREE.Group; speed: number; angle: number }[];
   atmosphere?: THREE.Mesh;
+  initialScale: THREE.Vector3;
+  initialLocalPos: THREE.Vector3;
+}
+
+export interface SkillPlanetRecord {
+  config: SkillPlanetItem;
+  mesh: THREE.Mesh;
+  label: THREE.Sprite;
+  atmosphere: THREE.Mesh;
+  initialPos: THREE.Vector3;
+  initialScale: THREE.Vector3;
 }
 
 @Injectable({
@@ -3176,17 +3886,48 @@ export class SolarSceneService {
   public renderer!: THREE.WebGLRenderer;
   public canvas!: HTMLCanvasElement;
 
-  private clock = new THREE.Clock();
+  private lastTime = performance.now();
   private animationFrameId: number | null = null;
 
   public objects: Map<string, SceneObjectRecord> = new Map();
   public interactiveMeshes: THREE.Object3D[] = [];
+
+  // Skills row collection
+  public skillPlanetsGroup = new THREE.Group();
+  public skillPlanetRecords: Map<string, SkillPlanetRecord> = new Map();
+
+  // Black Hole Singularity
+  public blackHole!: {
+    group: THREE.Group;
+    horizon: THREE.Mesh;
+    accretionDisk: THREE.Mesh;
+    photonRing: THREE.Mesh;
+    particles: THREE.Points;
+  };
+  private devouredNotified = false;
 
   // Special animated objects
   private sunMesh: THREE.Mesh | null = null;
   private sunGlow: THREE.Sprite | null = null;
   private asteroidBeltGroup: THREE.Group | null = null;
   private starfieldPoints: THREE.Points | null = null;
+
+  constructor() {
+    // React to row mode changes
+    effect(() => {
+      const isRow = this.state.isSkillsRowMode();
+      this.handleSkillsRowMode(isRow);
+    });
+
+    // React to reset universe
+    effect(() => {
+      const isCompleted = this.state.isBlackHoleCompleted();
+      const isActive = this.state.isBlackHoleActive();
+      if (!isCompleted && !isActive && this.devouredNotified) {
+        this.restoreUniverse();
+      }
+    });
+  }
 
   public init(canvas: HTMLCanvasElement): void {
     this.canvas = canvas;
@@ -3215,24 +3956,23 @@ export class SolarSceneService {
     this.setupLighting();
     this.setupStarfield();
 
-    // 5. Build Celestial Bodies
+    // 5. Build Celestial Bodies, Skills Row & Black Hole
     this.buildSystem();
+    this.buildSkillPlanetsRow();
+    this.buildBlackHole();
 
-    // 6. Start Loop
+    // 6. Start Animation Loop
     this.startLoop();
   }
 
   private setupLighting(): void {
-    // Ambient base light for visibility
     const ambient = new THREE.AmbientLight(0x1e293b, 1.2);
     this.scene.add(ambient);
 
-    // Central Sun light
     const sunLight = new THREE.PointLight(0xffedd5, 3.5, 300, 0.8);
     sunLight.position.set(0, 0, 0);
     this.scene.add(sunLight);
 
-    // Subtle directional rim light from high angle
     const dirLight = new THREE.DirectionalLight(0x38bdf8, 0.6);
     dirLight.position.set(50, 100, 50);
     this.scene.add(dirLight);
@@ -3250,7 +3990,6 @@ export class SolarSceneService {
     const color4 = new THREE.Color(0xa855f7);
 
     for (let i = 0; i < starCount; i++) {
-      // Spherical distribution around solar system
       const r = 400 + Math.random() * 800;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(Math.random() * 2 - 1);
@@ -3259,7 +3998,6 @@ export class SolarSceneService {
       positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = r * Math.cos(phi);
 
-      // Random stellar tint
       const rand = Math.random();
       const chosenColor = rand > 0.8 ? color2 : rand > 0.65 ? color3 : rand > 0.55 ? color4 : color1;
       colors[i * 3] = chosenColor.r;
@@ -3296,7 +4034,6 @@ export class SolarSceneService {
       const satList: { group: THREE.Group; speed: number; angle: number }[] = [];
 
       if (config.type === 'sun') {
-        // --- SUN ---
         const sunGeo = new THREE.SphereGeometry(config.radius, 48, 48);
         const sunMat = new THREE.MeshBasicMaterial({
           map: this.factory.createSunTexture()
@@ -3305,30 +4042,25 @@ export class SolarSceneService {
         this.sunMesh = sun;
         mainMesh = sun;
 
-        // Glowing corona sprite
         this.sunGlow = this.factory.createSunGlowSprite('#f59e0b', 256);
         sun.add(this.sunGlow);
 
         mainMesh.position.set(0, 0, 0);
         pivot.add(mainMesh);
       } else if (config.type === 'station') {
-        // --- COFICAB ORBITAL STATION ---
         mainMesh = this.factory.createCoficabStationMesh();
         mainMesh.position.set(config.orbitDistance, 0, 0);
         pivot.add(mainMesh);
       } else if (config.type === 'education') {
-        // --- EDUCATION ACADEMY STATION ---
         mainMesh = this.factory.createEducationStationMesh();
         mainMesh.position.set(config.orbitDistance, 0, 0);
         pivot.add(mainMesh);
       } else if (config.type === 'asteroid-belt') {
-        // --- ASTEROID BELT ---
         const belt = this.factory.createAsteroidBelt(350, config.orbitDistance, 10);
         this.asteroidBeltGroup = belt;
         mainMesh = belt;
         pivot.add(mainMesh);
       } else {
-        // --- STANDARD PLANETS ---
         const planetGeo = new THREE.SphereGeometry(config.radius, 36, 36);
         const planetMat = new THREE.MeshStandardMaterial({
           map: this.factory.createPlanetTexture(config.textureType, config.color),
@@ -3341,11 +4073,9 @@ export class SolarSceneService {
         mainMesh = planet;
         mainMesh.position.set(config.orbitDistance, 0, 0);
 
-        // Atmosphere glow
         atmosphere = this.factory.createAtmosphereGlow(config.radius, config.color);
         planet.add(atmosphere);
 
-        // Rings if configured
         if (config.ring) {
           const ringMesh = this.factory.createPlanetRing(
             config.ring.innerRadius,
@@ -3356,7 +4086,6 @@ export class SolarSceneService {
           planet.add(ringMesh);
         }
 
-        // Satellites / Moons
         if (config.satellites) {
           config.satellites.forEach((sat) => {
             const { group } = this.factory.createSatelliteGroup(sat);
@@ -3372,26 +4101,22 @@ export class SolarSceneService {
         pivot.add(mainMesh);
       }
 
-      // Orbit Line
       let orbitLine: THREE.Line | undefined;
       if (config.orbitDistance > 0 && config.type !== 'asteroid-belt') {
         orbitLine = this.factory.createOrbitLine(config.orbitDistance, config.color);
         this.scene.add(orbitLine);
       }
 
-      // 3D Label
       if (config.type !== 'asteroid-belt') {
         labelSprite = this.factory.createLabelSprite(config.name, config.category);
         labelSprite.position.set(0, config.radius + 3.0, 0);
         mainMesh.add(labelSprite);
       }
 
-      // Tag main mesh for Raycasting identification
       (mainMesh as unknown as { celestialId: string; celestialConfig: CelestialBodyConfig }).celestialId = config.id;
       (mainMesh as unknown as { celestialId: string; celestialConfig: CelestialBodyConfig }).celestialConfig = config;
       this.interactiveMeshes.push(mainMesh);
 
-      // Random starting orbital angle
       const startAngle = Math.random() * Math.PI * 2;
       pivot.rotation.y = startAngle;
 
@@ -3403,9 +4128,113 @@ export class SolarSceneService {
         labelSprite,
         currentAngle: startAngle,
         satellites: satList,
-        atmosphere
+        atmosphere,
+        initialScale: mainMesh.scale.clone(),
+        initialLocalPos: mainMesh.position.clone()
       });
     });
+  }
+
+  // --- BUILD SKILLS PLANETS IN A ROW ---
+
+  private buildSkillPlanetsRow(): void {
+    this.skillPlanetRecords.clear();
+    this.skillPlanetsGroup.clear();
+    this.scene.add(this.skillPlanetsGroup);
+
+    SKILL_PLANETS.forEach((item) => {
+      const geo = new THREE.SphereGeometry(item.radius, 36, 36);
+      const mat = new THREE.MeshStandardMaterial({
+        map: this.factory.createPlanetTexture(item.textureType, item.color),
+        roughness: 0.5,
+        metalness: 0.3,
+        emissive: new THREE.Color(item.emissiveColor),
+        emissiveIntensity: 0.18
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(item.rowX, 0, 0);
+
+      // Atmosphere glow
+      const atmosphere = this.factory.createAtmosphereGlow(item.radius, item.color);
+      mesh.add(atmosphere);
+
+      // 3D Label
+      const label = this.factory.createLabelSprite(item.name, item.category);
+      label.position.set(0, item.radius + 2.8, 0);
+      mesh.add(label);
+
+      // Orbital indicator ring on floor
+      const ringGeo = new THREE.RingGeometry(item.radius * 1.3, item.radius * 1.45, 32);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(item.color),
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.4
+      });
+      const baseRing = new THREE.Mesh(ringGeo, ringMat);
+      baseRing.rotation.x = Math.PI / 2;
+      baseRing.position.y = -item.radius - 0.2;
+      mesh.add(baseRing);
+
+      // Tag for Raycasting
+      (mesh as unknown as { isSkillPlanet: boolean; skillPlanetConfig: SkillPlanetItem }).isSkillPlanet = true;
+      (mesh as unknown as { isSkillPlanet: boolean; skillPlanetConfig: SkillPlanetItem }).skillPlanetConfig = item;
+      this.interactiveMeshes.push(mesh);
+
+      this.skillPlanetsGroup.add(mesh);
+
+      this.skillPlanetRecords.set(item.id, {
+        config: item,
+        mesh,
+        label,
+        atmosphere,
+        initialPos: new THREE.Vector3(item.rowX, 0, 0),
+        initialScale: mesh.scale.clone()
+      });
+    });
+
+    // By default, skills row is hidden until toggled or in skills row mode
+    this.skillPlanetsGroup.visible = false;
+  }
+
+  // --- BUILD BLACK HOLE ---
+
+  private buildBlackHole(): void {
+    this.blackHole = this.factory.createBlackHoleGroup();
+    this.blackHole.group.position.set(0, 0, 0);
+    this.scene.add(this.blackHole.group);
+  }
+
+  public handleSkillsRowMode(isRow: boolean): void {
+    this.skillPlanetsGroup.visible = isRow;
+    if (isRow) {
+      // Camera moves to wide front view of the row
+      this.cameraService.flyTo(new THREE.Vector3(0, 0, 0), 85, 22, null);
+    }
+  }
+
+  public restoreUniverse(): void {
+    this.devouredNotified = false;
+    if (this.blackHole) {
+      this.blackHole.group.visible = false;
+      this.blackHole.group.scale.set(0.001, 0.001, 0.001);
+    }
+
+    // Restore regular celestial bodies
+    this.objects.forEach((rec) => {
+      rec.mesh.position.copy(rec.initialLocalPos);
+      rec.mesh.scale.copy(rec.initialScale);
+      rec.mesh.visible = true;
+    });
+
+    // Restore skill planets
+    this.skillPlanetRecords.forEach((rec) => {
+      rec.mesh.position.copy(rec.initialPos);
+      rec.mesh.scale.copy(rec.initialScale);
+      rec.mesh.visible = true;
+    });
+
+    this.cameraService.flyToOverview();
   }
 
   public resize(): void {
@@ -3420,65 +4249,143 @@ export class SolarSceneService {
     const animate = () => {
       this.animationFrameId = requestAnimationFrame(animate);
 
-      const delta = this.clock.getDelta();
+      const now = performance.now();
+      const delta = Math.min((now - this.lastTime) / 1000, 0.1);
+      this.lastTime = now;
       const speedMult = this.state.orbitSpeedMultiplier();
       const showOrbits = this.state.showOrbitLines();
       const showLabels = this.state.showLabels();
+      const isBlackHole = this.state.isBlackHoleActive();
+      const isRowMode = this.state.isSkillsRowMode();
 
-      // 1. Orbit & Rotation updates
-      this.objects.forEach((record) => {
-        const { config, pivot, mesh, satellites, orbitLine, labelSprite } = record;
+      // --- BLACK HOLE GRAVITATIONAL COLLAPSE LOOP ---
+      if (isBlackHole && this.blackHole) {
+        this.blackHole.group.visible = true;
+        this.blackHole.group.scale.lerp(new THREE.Vector3(1, 1, 1), delta * 2.0);
 
-        // Toggle orbit line visibility
-        if (orbitLine) {
-          orbitLine.visible = showOrbits;
+        // Spin accretion disk rapidly
+        this.blackHole.accretionDisk.rotation.z += delta * 4.5;
+        this.blackHole.photonRing.rotation.z -= delta * 3.0;
+
+        // Swirl vortex particles
+        const posAttr = this.blackHole.particles.geometry.getAttribute('position') as THREE.BufferAttribute;
+        for (let i = 0; i < posAttr.count; i++) {
+          let x = posAttr.getX(i);
+          let z = posAttr.getZ(i);
+          const r = Math.hypot(x, z);
+          const theta = Math.atan2(z, x) + delta * 2.8;
+          const nextR = r > 6.2 ? r - delta * 14 : 32.0;
+
+          posAttr.setX(i, Math.cos(theta) * nextR);
+          posAttr.setZ(i, Math.sin(theta) * nextR);
         }
+        posAttr.needsUpdate = true;
 
-        // Toggle 3D label visibility
-        if (labelSprite) {
-          labelSprite.visible = showLabels;
-        }
+        let totalRemaining = 0;
 
-        // Orbit around Sun (pivot rotation)
-        if (config.orbitSpeed > 0 && speedMult > 0) {
-          pivot.rotation.y += config.orbitSpeed * speedMult * 0.5;
-        }
-
-        // Self-rotation on axis
-        if (config.rotationSpeed > 0) {
-          mesh.rotation.y += config.rotationSpeed;
-        }
-
-        // Satellites orbiting their planet
-        satellites.forEach((sat) => {
-          sat.angle += sat.speed * (speedMult > 0 ? speedMult : 1) * 0.8;
-          sat.group.rotation.y = sat.angle;
+        // Devour Skill Planets
+        this.skillPlanetRecords.forEach((rec) => {
+          if (rec.mesh.scale.x > 0.02) {
+            totalRemaining++;
+            rec.mesh.position.lerp(new THREE.Vector3(0, 0, 0), delta * 1.8);
+            const dist = rec.mesh.position.length();
+            if (dist < 22) {
+              rec.mesh.scale.multiplyScalar(Math.max(0.01, 1 - delta * 3.2));
+            }
+            if (dist < 5.0) {
+              rec.mesh.scale.set(0.0001, 0.0001, 0.0001);
+            }
+          }
         });
-      });
 
-      // 2. Animate Sun & Flares
+        // Devour System Project Planets
+        this.objects.forEach((rec) => {
+          if (rec.config.type !== 'sun' && rec.mesh.scale.x > 0.02) {
+            totalRemaining++;
+            const worldPos = new THREE.Vector3();
+            rec.mesh.getWorldPosition(worldPos);
+            worldPos.lerp(new THREE.Vector3(0, 0, 0), delta * 1.6);
+            rec.pivot.worldToLocal(worldPos);
+            rec.mesh.position.copy(worldPos);
+
+            const dist = rec.mesh.position.length();
+            if (dist < 28) {
+              rec.mesh.scale.multiplyScalar(Math.max(0.01, 1 - delta * 2.8));
+            }
+            if (dist < 6.0) {
+              rec.mesh.scale.set(0.0001, 0.0001, 0.0001);
+            }
+          }
+        });
+
+        // Check if all planets are devoured
+        if (totalRemaining === 0 && !this.devouredNotified) {
+          this.devouredNotified = true;
+          // Flash effect & trigger completion
+          this.blackHole.photonRing.scale.multiplyScalar(1.4);
+          setTimeout(() => {
+            this.state.onBlackHoleCompleted();
+          }, 1200);
+        }
+      } else {
+        // --- NORMAL ORBITAL & ROW ROTATIONS ---
+        this.objects.forEach((record) => {
+          const { config, pivot, mesh, satellites, orbitLine, labelSprite } = record;
+
+          if (orbitLine) {
+            orbitLine.visible = showOrbits && !isRowMode;
+          }
+
+          if (labelSprite) {
+            labelSprite.visible = showLabels;
+          }
+
+          if (config.orbitSpeed > 0 && speedMult > 0 && !isRowMode) {
+            pivot.rotation.y += config.orbitSpeed * speedMult * 0.5;
+          }
+
+          if (config.rotationSpeed > 0) {
+            mesh.rotation.y += config.rotationSpeed;
+          }
+
+          satellites.forEach((sat) => {
+            sat.angle += sat.speed * (speedMult > 0 ? speedMult : 1) * 0.8;
+            sat.group.rotation.y = sat.angle;
+          });
+        });
+
+        // Rotate Skill Planets in their row
+        if (isRowMode) {
+          this.skillPlanetRecords.forEach((rec) => {
+            rec.mesh.rotation.y += 0.012;
+            rec.label.visible = showLabels;
+          });
+        }
+      }
+
+      // Animate Sun & Flares
       if (this.sunMesh) {
         this.sunMesh.rotation.y += 0.002;
       }
       if (this.sunGlow) {
-        const pulse = 28 + Math.sin(this.clock.getElapsedTime() * 2) * 1.5;
+        const pulse = 28 + Math.sin((now / 1000) * 2) * 1.5;
         this.sunGlow.scale.set(pulse, pulse, 1);
       }
 
-      // 3. Asteroid belt slow drift
+      // Asteroid belt drift
       if (this.asteroidBeltGroup) {
         this.asteroidBeltGroup.rotation.y += 0.0006 * (speedMult > 0 ? speedMult : 1);
       }
 
-      // 4. Subtle starfield twinkling/rotation
+      // Starfield drift
       if (this.starfieldPoints) {
         this.starfieldPoints.rotation.y += 0.00008;
       }
 
-      // 5. Update Camera flight & OrbitControls
+      // Camera flight update
       this.cameraService.update(delta);
 
-      // 6. Render
+      // Render
       this.renderer.render(this.scene, this.cameraService.camera);
     };
 
@@ -3504,10 +4411,17 @@ import { Injectable, effect, inject } from '@angular/core';
 import * as THREE from 'three';
 import { CelestialBodyConfig } from '../../models/celestial.model';
 import { CELESTIAL_BODIES } from '../../data/celestial.data';
+import { SkillPlanetItem } from '../../data/skill.data';
 import { SolarSceneService } from './solar-scene.service';
 import { CameraService } from './camera.service';
 import { StateService } from './state.service';
 import { AudioService } from './audio.service';
+
+interface InteractiveTarget {
+  mesh: THREE.Object3D;
+  celestialConfig?: CelestialBodyConfig;
+  skillPlanetConfig?: SkillPlanetItem;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -3533,7 +4447,7 @@ export class InteractionService {
       const target = this.state.selectedTarget();
       if (target) {
         this.focusOnTarget(target);
-      } else {
+      } else if (!this.state.isSkillsRowMode() && !this.state.isBlackHoleActive()) {
         this.cameraService.flyToOverview();
       }
     });
@@ -3561,6 +4475,8 @@ export class InteractionService {
   }
 
   private onPointerMove(e: MouseEvent, canvas: HTMLCanvasElement): void {
+    if (this.state.isBlackHoleActive()) return;
+
     const rect = canvas.getBoundingClientRect();
     this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -3570,28 +4486,46 @@ export class InteractionService {
     const intersects = this.raycaster.intersectObjects(this.solarScene.interactiveMeshes, true);
 
     if (intersects.length > 0) {
-      const topTarget = this.findCelestialObject(intersects[0].object);
-      if (topTarget) {
-        const config = (topTarget as unknown as { celestialConfig: CelestialBodyConfig }).celestialConfig;
-
+      const target = this.findInteractiveObject(intersects[0].object);
+      if (target) {
         // Apply subtle hover scale
-        if (this.hoveredMesh !== topTarget) {
+        if (this.hoveredMesh !== target.mesh) {
           this.resetHoveredMesh();
-          this.hoveredMesh = topTarget;
-          this.originalScale.copy(topTarget.scale);
-          topTarget.scale.multiplyScalar(1.08);
+          this.hoveredMesh = target.mesh;
+          this.originalScale.copy(target.mesh.scale);
+          target.mesh.scale.multiplyScalar(1.08);
           canvas.style.cursor = 'pointer';
         }
 
         // Screen projection for hover tooltip
         const worldPos = new THREE.Vector3();
-        topTarget.getWorldPosition(worldPos);
+        target.mesh.getWorldPosition(worldPos);
         worldPos.project(this.cameraService.camera);
 
         const screenX = ((worldPos.x + 1) * rect.width) / 2;
         const screenY = ((-worldPos.y + 1) * rect.height) / 2;
 
-        this.state.setHoveredTarget(config, { x: screenX, y: screenY });
+        if (target.skillPlanetConfig) {
+          const sp = target.skillPlanetConfig;
+          const syntheticConfig: CelestialBodyConfig = {
+            id: sp.id,
+            name: sp.name,
+            subtitle: sp.tagline,
+            category: sp.category,
+            type: 'planet',
+            radius: sp.radius,
+            orbitDistance: 0,
+            orbitSpeed: 0,
+            rotationSpeed: 0,
+            color: sp.color,
+            emissiveColor: sp.emissiveColor,
+            textureType: sp.textureType,
+            cameraDistance: 12
+          };
+          this.state.setHoveredTarget(syntheticConfig, { x: screenX, y: screenY });
+        } else if (target.celestialConfig) {
+          this.state.setHoveredTarget(target.celestialConfig, { x: screenX, y: screenY });
+        }
         return;
       }
     }
@@ -3603,6 +4537,8 @@ export class InteractionService {
   }
 
   private handleClick(e: MouseEvent, canvas: HTMLCanvasElement): void {
+    if (this.state.isBlackHoleActive()) return;
+
     const rect = canvas.getBoundingClientRect();
     this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -3611,19 +4547,37 @@ export class InteractionService {
     const intersects = this.raycaster.intersectObjects(this.solarScene.interactiveMeshes, true);
 
     if (intersects.length > 0) {
-      const topTarget = this.findCelestialObject(intersects[0].object);
-      if (topTarget) {
-        const config = (topTarget as unknown as { celestialConfig: CelestialBodyConfig }).celestialConfig;
-        this.state.selectTarget(config, true);
+      const target = this.findInteractiveObject(intersects[0].object);
+      if (target) {
+        if (target.skillPlanetConfig) {
+          this.state.openSkillPlanet(target.skillPlanetConfig);
+
+          // Fly camera to skill planet
+          const worldPos = new THREE.Vector3();
+          target.mesh.getWorldPosition(worldPos);
+          this.cameraService.flyTo(worldPos, 14, 3, target.mesh);
+        } else if (target.celestialConfig) {
+          this.state.selectTarget(target.celestialConfig, true);
+          // Also mark explored if it has an id
+          this.state.explorePlanet(target.celestialConfig.id);
+        }
       }
     }
   }
 
-  private findCelestialObject(obj: THREE.Object3D): THREE.Object3D | null {
+  private findInteractiveObject(obj: THREE.Object3D): InteractiveTarget | null {
     let curr: THREE.Object3D | null = obj;
     while (curr) {
-      if ((curr as unknown as { celestialConfig?: CelestialBodyConfig }).celestialConfig) {
-        return curr;
+      const anyCurr = curr as unknown as {
+        isSkillPlanet?: boolean;
+        skillPlanetConfig?: SkillPlanetItem;
+        celestialConfig?: CelestialBodyConfig;
+      };
+      if (anyCurr.isSkillPlanet && anyCurr.skillPlanetConfig) {
+        return { mesh: curr, skillPlanetConfig: anyCurr.skillPlanetConfig };
+      }
+      if (anyCurr.celestialConfig) {
+        return { mesh: curr, celestialConfig: anyCurr.celestialConfig };
       }
       curr = curr.parent;
     }
@@ -3653,7 +4607,6 @@ export class InteractionService {
   }
 
   private onKeyDown(e: KeyboardEvent): void {
-    // If typing in input or textarea, ignore
     if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) {
       return;
     }
@@ -3668,6 +4621,10 @@ export class InteractionService {
       this.state.toggleOrbitLines();
     } else if (e.key === 'l' || e.key === 'L') {
       this.state.toggleLabels();
+    } else if (e.key === 'r' || e.key === 'R') {
+      this.state.toggleSkillsRowMode();
+    } else if (e.key === 'b' || e.key === 'B') {
+      this.state.triggerBlackHole();
     } else if (e.key >= '1' && e.key <= '9') {
       const index = parseInt(e.key, 10) - 1;
       if (index < CELESTIAL_BODIES.length) {
@@ -3857,11 +4814,21 @@ import { SOCIAL_DATA } from '../../data/social.data';
           </button>
 
           <button
+            (click)="toggleSkillsRow()"
+            [class.text-cyan-400]="isSkillsRowMode()"
+            [class.bg-cyan-500/15]="isSkillsRowMode()"
+            class="rounded-lg px-2.5 py-1 font-mono text-xs font-semibold tracking-wider text-slate-200 transition-colors hover:bg-slate-800/60 hover:text-white"
+            title="Align all skill planets in a single row"
+          >
+            {{ isSkillsRowMode() ? '🌌 SKILLS ROW [ON]' : '🪐 SKILLS ROW' }}
+          </button>
+
+          <button
             (click)="openModal('skills')"
             [class.text-cyan-400]="activeModal() === 'skills'"
             class="rounded-lg px-2.5 py-1 font-mono text-xs font-medium tracking-wider text-slate-300 transition-colors hover:bg-slate-800/60 hover:text-white"
           >
-            SKILLS
+            MATRIX
           </button>
 
           <button
@@ -3974,6 +4941,11 @@ export class HudNavComponent {
   public isMissionControlOpen = computed(() => this.state.isMissionControlOpen());
   public is2DMode = computed(() => this.state.is2DMode());
   public isMuted = computed(() => this.audio.isMuted());
+  public isSkillsRowMode = computed(() => this.state.isSkillsRowMode());
+
+  public toggleSkillsRow(): void {
+    this.state.toggleSkillsRowMode();
+  }
 
   public returnToSystem(): void {
     this.state.returnToSystem();
@@ -4164,6 +5136,124 @@ export class MissionControlComponent {
 
   public selectBody(body: CelestialBodyConfig): void {
     this.state.selectTarget(body, true);
+  }
+}
+
+
+================================================================================
+FILE: src/app/components/recruiter-tracker/recruiter-tracker.component.ts
+================================================================================
+
+import { Component, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { StateService } from '../../core/services/state.service';
+import { SKILL_PLANETS } from '../../data/skill.data';
+
+@Component({
+  selector: 'app-recruiter-tracker',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    @if (!isBlackHoleActive() && !isBlackHoleCompleted()) {
+      <div
+        class="pointer-events-none fixed top-16 left-3 z-30 max-w-[320px] sm:max-w-none md:left-6"
+      >
+        <div
+          class="pointer-events-auto rounded-xl border border-cyan-500/30 bg-slate-950/85 p-3 shadow-xl backdrop-blur-xl"
+        >
+          <!-- Header -->
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="inline-block h-2 w-2 rounded-full bg-cyan-400 animate-ping"></span>
+              <span class="font-mono text-[11px] font-bold tracking-wider text-cyan-300 uppercase">
+                RECRUITER SCANNER
+              </span>
+            </div>
+            <span class="rounded bg-cyan-950/60 border border-cyan-500/40 px-2 py-0.5 font-mono text-[10px] text-cyan-300 font-bold">
+              {{ exploredCount() }} / {{ totalPlanets }} EXPLORED
+            </span>
+          </div>
+
+          <!-- Planet Dots Bar -->
+          <div class="mt-2.5 flex items-center gap-1.5">
+            @for (planet of planets; track planet.id) {
+              <button
+                (click)="onPlanetPipClick(planet)"
+                [title]="planet.name"
+                class="group relative flex-1 h-2 rounded-full transition-all"
+                [class.bg-emerald-400]="isPlanetExplored(planet.id)"
+                [class.shadow-[0_0_8px_#34d399]]="isPlanetExplored(planet.id)"
+                [class.bg-slate-800]="!isPlanetExplored(planet.id)"
+              >
+                <!-- Tooltip on hover -->
+                <span
+                  class="pointer-events-none absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-900 border border-slate-700 px-1.5 py-0.5 text-[9px] text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  {{ planet.category }}
+                </span>
+              </button>
+            }
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-3 flex items-center gap-2 font-mono text-[11px]">
+            <!-- Toggle Skills Row Mode -->
+            <button
+              (click)="toggleRowMode()"
+              [class.bg-cyan-500]="isRowMode()"
+              [class.text-slate-950]="isRowMode()"
+              [class.font-bold]="isRowMode()"
+              [class.bg-slate-900]="!isRowMode()"
+              [class.text-slate-300]="!isRowMode()"
+              class="flex-1 rounded-lg border border-cyan-500/40 px-2.5 py-1.5 text-center transition-colors hover:border-cyan-400"
+            >
+              {{ isRowMode() ? '🌌 ALIGNED IN ROW' : '🪐 ALIGN IN ROW' }}
+            </button>
+
+            <!-- Trigger Black Hole Button -->
+            <button
+              (click)="triggerBlackHole()"
+              class="rounded-lg border border-purple-500/50 bg-purple-500/20 px-2.5 py-1.5 font-bold text-purple-200 transition-all hover:bg-purple-500/40 hover:text-white hover:scale-103"
+              title="Trigger Cosmic Black Hole Gravitational Collapse"
+            >
+              🕳️ BLACK HOLE
+            </button>
+          </div>
+
+          <div class="mt-2 text-[10px] text-slate-400 font-mono">
+            Check all 6 planets to summon the Black Hole &amp; reveal Contacts!
+          </div>
+        </div>
+      </div>
+    }
+  `
+})
+export class RecruiterTrackerComponent {
+  private state = inject(StateService);
+
+  public planets = SKILL_PLANETS;
+  public totalPlanets = SKILL_PLANETS.length;
+
+  public isRowMode = computed(() => this.state.isSkillsRowMode());
+  public exploredCount = computed(() => this.state.exploredCount());
+  public isBlackHoleActive = computed(() => this.state.isBlackHoleActive());
+  public isBlackHoleCompleted = computed(() => this.state.isBlackHoleCompleted());
+
+  public isPlanetExplored(id: string): boolean {
+    return this.state.exploredPlanets().has(id);
+  }
+
+  public onPlanetPipClick(planet: any): void {
+    this.state.setSkillsRowMode(true);
+    this.state.openSkillPlanet(planet);
+  }
+
+  public toggleRowMode(): void {
+    this.state.toggleSkillsRowMode();
+  }
+
+  public triggerBlackHole(): void {
+    this.state.triggerBlackHole();
   }
 }
 
@@ -4487,6 +5577,371 @@ export class CinematicIntroComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.intervalId) clearInterval(this.intervalId);
+  }
+}
+
+
+================================================================================
+FILE: src/app/components/views/skill-planet-modal/skill-planet-modal.component.ts
+================================================================================
+
+import { Component, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { StateService } from '../../../core/services/state.service';
+import { SKILL_PLANETS, SkillPlanetItem } from '../../../data/skill.data';
+
+@Component({
+  selector: 'app-skill-planet-modal',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    @if (skillPlanet(); as sp) {
+      <div
+        class="fixed inset-0 z-40 flex justify-end bg-slate-950/60 backdrop-blur-sm transition-all md:items-stretch"
+        (click)="onBackdropClick($event)"
+      >
+        <div
+          class="relative flex h-[90vh] w-full flex-col overflow-y-auto rounded-t-3xl border-t bg-slate-950/95 p-6 shadow-2xl backdrop-blur-2xl md:h-full md:w-[620px] md:rounded-t-none md:rounded-l-3xl md:border-t-0 md:border-l md:p-8"
+          [style.border-color]="sp.color + '60'"
+        >
+          <!-- Corner HUD Accents -->
+          <div
+            class="absolute top-4 left-4 h-3 w-3 border-t-2 border-l-2"
+            [style.border-color]="sp.color"
+          ></div>
+          <div
+            class="absolute top-4 right-4 h-3 w-3 border-t-2 border-r-2"
+            [style.border-color]="sp.color"
+          ></div>
+
+          <!-- Header -->
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-2">
+              <span
+                class="inline-block h-2.5 w-2.5 rounded-full"
+                [style.background-color]="sp.color"
+                [style.box-shadow]="'0 0 10px ' + sp.color"
+              ></span>
+              <span
+                class="font-mono text-xs font-bold tracking-widest uppercase"
+                [style.color]="sp.color"
+              >
+                SKILL PLANET // {{ sp.category }}
+              </span>
+            </div>
+            <button
+              (click)="close()"
+              class="flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-900/80 px-3 py-1 font-mono text-xs text-slate-300 transition-colors hover:border-slate-500 hover:text-white"
+            >
+              <span>RETURN TO ROW</span>
+              <span class="font-bold">✕</span>
+            </button>
+          </div>
+
+          <!-- Main Info -->
+          <div class="mt-6">
+            <div class="flex items-center gap-2">
+              <h1 class="text-2xl font-black tracking-tight text-white md:text-3xl">
+                {{ sp.name }}
+              </h1>
+              <span
+                class="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-emerald-300"
+              >
+                <span>✓</span>
+                <span>EXPLORED</span>
+              </span>
+            </div>
+            <p class="mt-1 font-mono text-xs text-slate-400">
+              {{ sp.category }}
+            </p>
+            <p class="mt-2 text-sm font-medium text-slate-200 leading-relaxed">
+              {{ sp.tagline }}
+            </p>
+          </div>
+
+          <!-- Highlight -->
+          <div
+            class="mt-6 rounded-xl border p-4"
+            [style.border-color]="sp.color + '40'"
+            [style.background-color]="sp.color + '10'"
+          >
+            <div
+              class="font-mono text-[10px] tracking-wider uppercase font-semibold"
+              [style.color]="sp.color"
+            >
+              ARCHITECTURE &amp; CAPABILITY SYNOPSIS
+            </div>
+            <p class="mt-2 text-xs leading-relaxed text-slate-200">
+              {{ sp.highlight }}
+            </p>
+          </div>
+
+          <!-- Skills breakdown -->
+          <div class="mt-6">
+            <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">
+              DEEP TECHNICAL COMPETENCIES
+            </div>
+            <div class="mt-3 space-y-2.5">
+              @for (item of sp.skills; track item.name) {
+                <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5">
+                  <div class="flex items-center justify-between">
+                    <span class="font-mono text-xs font-bold text-white">
+                      {{ item.name }}
+                    </span>
+                    <span
+                      class="rounded-full bg-slate-800 px-2.5 py-0.5 font-mono text-[10px]"
+                      [style.color]="sp.color"
+                    >
+                      {{ item.level }}
+                    </span>
+                  </div>
+                  @if (item.detail) {
+                    <div class="mt-1 text-xs text-slate-400">
+                      {{ item.detail }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Bottom Actions -->
+          <div class="mt-8 border-t border-slate-800 pt-6 flex flex-wrap items-center gap-3">
+            <button
+              (click)="nextSkillPlanet()"
+              class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-cyan-500/50 bg-cyan-500/20 py-2.5 font-mono text-xs font-bold text-white transition-all hover:bg-cyan-500/30 hover:scale-102"
+            >
+              <span>INSPECT NEXT PLANET</span>
+              <span>→</span>
+            </button>
+            <button
+              (click)="close()"
+              class="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 font-mono text-xs text-slate-300 hover:text-white"
+            >
+              CLOSE
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  `
+})
+export class SkillPlanetModalComponent {
+  private state = inject(StateService);
+
+  public skillPlanet = computed(() => this.state.activeSkillPlanet());
+  public allPlanets = SKILL_PLANETS;
+
+  public close(): void {
+    this.state.closeModal();
+  }
+
+  public nextSkillPlanet(): void {
+    const current = this.skillPlanet();
+    if (!current) return;
+    const currentIndex = this.allPlanets.findIndex((p) => p.id === current.id);
+    const nextIndex = (currentIndex + 1) % this.allPlanets.length;
+    this.state.openSkillPlanet(this.allPlanets[nextIndex]);
+  }
+
+  public onBackdropClick(e: MouseEvent): void {
+    if ((e.target as HTMLElement).classList.contains('fixed')) {
+      this.close();
+    }
+  }
+}
+
+
+================================================================================
+FILE: src/app/components/views/black-hole-contact/black-hole-contact.component.ts
+================================================================================
+
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { StateService } from '../../../core/services/state.service';
+import { SOCIAL_DATA } from '../../../data/social.data';
+import { PORTFOLIO_CONFIG } from '../../../data/portfolio.config';
+
+@Component({
+  selector: 'app-black-hole-contact',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-xl animate-fade-in"
+    >
+      <!-- Background Singularity Glow -->
+      <div
+        class="pointer-events-none absolute h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.25)_0,rgba(56,189,248,0.15)_40%,transparent_70%)] animate-pulse"
+      ></div>
+
+      <div
+        class="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-purple-500/40 bg-slate-950/95 p-6 shadow-[0_0_80px_rgba(168,85,247,0.35)] backdrop-blur-2xl sm:p-8"
+      >
+        <!-- Corner Accents -->
+        <div class="absolute top-4 left-4 h-3 w-3 border-t-2 border-l-2 border-purple-400"></div>
+        <div class="absolute top-4 right-4 h-3 w-3 border-t-2 border-r-2 border-purple-400"></div>
+        <div class="absolute bottom-4 left-4 h-3 w-3 border-b-2 border-l-2 border-purple-400"></div>
+        <div class="absolute bottom-4 right-4 h-3 w-3 border-b-2 border-r-2 border-purple-400"></div>
+
+        <!-- Banner badge -->
+        <div class="text-center">
+          <div
+            class="inline-flex items-center gap-2 rounded-full border border-purple-500/50 bg-purple-950/60 px-4 py-1 font-mono text-xs font-bold text-purple-300 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+          >
+            <span class="inline-block h-2 w-2 rounded-full bg-purple-400 animate-ping"></span>
+            <span>COSMIC SINGULARITY COLLAPSE // ALL PLANETS CONSUMED</span>
+          </div>
+
+          <h1 class="mt-4 text-2xl font-black tracking-tight text-white sm:text-4xl">
+            ALL SKILLS CONVERGE ON AZIZ
+          </h1>
+
+          <p class="mt-2 text-xs leading-relaxed text-slate-300 sm:text-sm">
+            You have inspected every skill planet in the system. Space-time has collapsed into the central singularity. Connect directly with <strong class="text-white">{{ config.name }}</strong> to start the next mission.
+          </p>
+        </div>
+
+        <!-- Email copy feedback toast -->
+        @if (copied()) {
+          <div class="mt-4 flex items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-mono text-xs text-emerald-300">
+            <span>✓</span>
+            <span>Email copied to clipboard: {{ social.email.handle }}</span>
+          </div>
+        }
+
+        <!-- Direct Contact Channels -->
+        <div class="mt-6 space-y-3">
+          <!-- Email -->
+          <div class="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 transition-colors hover:border-slate-700">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-900/30 text-purple-300 font-bold">
+                ✉
+              </div>
+              <div>
+                <div class="font-mono text-[10px] text-slate-400 uppercase">Direct Email</div>
+                <div class="font-mono text-xs font-bold text-white">{{ social.email.handle }}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                (click)="copyEmail()"
+                class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 font-mono text-xs text-slate-200 transition-colors hover:border-cyan-400 hover:text-white"
+              >
+                Copy
+              </button>
+              <a
+                [href]="social.email.url"
+                class="rounded-lg border border-purple-500/40 bg-purple-500/20 px-3 py-1.5 font-mono text-xs text-purple-200 transition-colors hover:bg-purple-500/40 hover:text-white"
+              >
+                Send
+              </a>
+            </div>
+          </div>
+
+          <!-- LinkedIn -->
+          <a
+            [href]="social.linkedin.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 transition-all hover:border-blue-500/50 hover:bg-slate-900"
+          >
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-900/30 text-blue-400 font-bold">
+                in
+              </div>
+              <div>
+                <div class="font-mono text-[10px] text-slate-400 uppercase">LinkedIn Profile</div>
+                <div class="text-xs font-bold text-white group-hover:text-blue-300">Mohamed Aziz Tabakh</div>
+              </div>
+            </div>
+            <span class="font-mono text-xs text-slate-400 group-hover:text-white">Connect ↗</span>
+          </a>
+
+          <!-- GitHub -->
+          <a
+            [href]="social.github.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 transition-all hover:border-slate-600 hover:bg-slate-900"
+          >
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800 text-white font-bold">
+                gh
+              </div>
+              <div>
+                <div class="font-mono text-[10px] text-slate-400 uppercase">GitHub Repository</div>
+                <div class="font-mono text-xs font-bold text-white group-hover:text-cyan-300">&#64;MrTBK</div>
+              </div>
+            </div>
+            <span class="font-mono text-xs text-slate-400 group-hover:text-white">Inspect Repos ↗</span>
+          </a>
+
+          <!-- Phone / WhatsApp -->
+          <a
+            [href]="social.phone.url"
+            class="group flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 transition-all hover:border-emerald-500/50 hover:bg-slate-900"
+          >
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-900/30 text-emerald-400 font-bold">
+                📞
+              </div>
+              <div>
+                <div class="font-mono text-[10px] text-slate-400 uppercase">Phone &amp; WhatsApp</div>
+                <div class="font-mono text-xs font-bold text-white group-hover:text-emerald-300">{{ social.phone.handle }}</div>
+              </div>
+            </div>
+            <span class="font-mono text-xs text-slate-400 group-hover:text-white">Call ↗</span>
+          </a>
+        </div>
+
+        <!-- Download CV Card -->
+        <div class="mt-6 flex flex-col gap-3 rounded-2xl border border-purple-500/30 bg-purple-950/30 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div class="font-mono text-xs font-bold text-purple-300">DOWNLOAD RESUME (PDF)</div>
+            <div class="text-[11px] text-slate-400">Complete curriculum vitae and verified project achievements.</div>
+          </div>
+          <a
+            [href]="social.resume.url"
+            [download]="social.resume.fileName"
+            class="flex items-center justify-center gap-1.5 rounded-xl border border-purple-400 bg-purple-500/30 px-4 py-2 font-mono text-xs font-bold text-white transition-all hover:bg-purple-500 hover:scale-102"
+          >
+            <span>DOWNLOAD CV</span>
+            <span>↓</span>
+          </a>
+        </div>
+
+        <!-- Universe Rebirth Button (Big Bang) -->
+        <div class="mt-8 border-t border-slate-800 pt-6 flex flex-col gap-3 sm:flex-row">
+          <button
+            (click)="resetUniverse()"
+            class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-cyan-500 bg-cyan-500/20 py-3 font-mono text-xs font-bold text-cyan-200 transition-all hover:bg-cyan-500/40 hover:text-white hover:scale-102"
+          >
+            <span>✨ BIG BANG: REBIRTH SOLAR SYSTEM</span>
+            <span>↺</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `
+})
+export class BlackHoleContactComponent {
+  private state = inject(StateService);
+
+  public config = PORTFOLIO_CONFIG;
+  public social = SOCIAL_DATA;
+  public copied = signal<boolean>(false);
+
+  public copyEmail(): void {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(this.social.email.handle);
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 3000);
+    }
+  }
+
+  public resetUniverse(): void {
+    this.state.resetUniverse();
   }
 }
 

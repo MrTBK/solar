@@ -49,11 +49,21 @@ import { SOCIAL_DATA } from '../../data/social.data';
           </button>
 
           <button
+            (click)="toggleSkillsRow()"
+            [class.text-cyan-400]="isSkillsRowMode()"
+            [class.bg-cyan-500/15]="isSkillsRowMode()"
+            class="rounded-lg px-2.5 py-1 font-mono text-xs font-semibold tracking-wider text-slate-200 transition-colors hover:bg-slate-800/60 hover:text-white"
+            title="Align all skill planets in a single row"
+          >
+            {{ isSkillsRowMode() ? '🌌 SKILLS ROW [ON]' : '🪐 SKILLS ROW' }}
+          </button>
+
+          <button
             (click)="openModal('skills')"
             [class.text-cyan-400]="activeModal() === 'skills'"
             class="rounded-lg px-2.5 py-1 font-mono text-xs font-medium tracking-wider text-slate-300 transition-colors hover:bg-slate-800/60 hover:text-white"
           >
-            SKILLS
+            MATRIX
           </button>
 
           <button
@@ -166,6 +176,11 @@ export class HudNavComponent {
   public isMissionControlOpen = computed(() => this.state.isMissionControlOpen());
   public is2DMode = computed(() => this.state.is2DMode());
   public isMuted = computed(() => this.audio.isMuted());
+  public isSkillsRowMode = computed(() => this.state.isSkillsRowMode());
+
+  public toggleSkillsRow(): void {
+    this.state.toggleSkillsRowMode();
+  }
 
   public returnToSystem(): void {
     this.state.returnToSystem();

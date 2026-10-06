@@ -17,6 +17,9 @@ import { CompetitionsModalComponent } from './components/views/competitions-moda
 import { ContactModalComponent } from './components/views/contact-modal/contact-modal.component';
 import { Fallback2DComponent } from './components/views/fallback-2d/fallback-2d.component';
 import { CinematicIntroComponent } from './components/cinematic-intro/cinematic-intro.component';
+import { RecruiterTrackerComponent } from './components/recruiter-tracker/recruiter-tracker.component';
+import { SkillPlanetModalComponent } from './components/views/skill-planet-modal/skill-planet-modal.component';
+import { BlackHoleContactComponent } from './components/views/black-hole-contact/black-hole-contact.component';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +37,10 @@ import { CinematicIntroComponent } from './components/cinematic-intro/cinematic-
     CompetitionsModalComponent,
     ContactModalComponent,
     Fallback2DComponent,
-    CinematicIntroComponent
+    CinematicIntroComponent,
+    RecruiterTrackerComponent,
+    SkillPlanetModalComponent,
+    BlackHoleContactComponent
   ],
   templateUrl: './app.html'
 })

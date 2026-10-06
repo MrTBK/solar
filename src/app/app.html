@@ -49,9 +49,22 @@
     </div>
   }
 
+  <!-- Recruiter Quest Tracker HUD -->
+  @if (!is2DMode()) {
+    <app-recruiter-tracker />
+  }
+
   <!-- Modals & Views -->
   @if (activeModal() === 'project') {
     <app-project-modal />
+  }
+
+  @if (activeModal() === 'skill-planet') {
+    <app-skill-planet-modal />
+  }
+
+  @if (activeModal() === 'black-hole-contact') {
+    <app-black-hole-contact />
   }
 
   @if (activeModal() === 'about') {

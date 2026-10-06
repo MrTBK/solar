@@ -640,4 +640,147 @@ export class CelestialFactoryService {
     sprite.scale.set(6, 1.5, 1);
     return sprite;
   }
+
+  // --- BLACK HOLE SINGULARITY & ACCRETION DISK ---
+
+  public createBlackHoleGroup(): {
+    group: THREE.Group;
+    horizon: THREE.Mesh;
+    accretionDisk: THREE.Mesh;
+    photonRing: THREE.Mesh;
+    particles: THREE.Points;
+  } {
+    const group = new THREE.Group();
+
+    // 1. Event Horizon: Pure unreflective pitch-black void
+    const horizonGeo = new THREE.SphereGeometry(6.0, 48, 48);
+    const horizonMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const horizon = new THREE.Mesh(horizonGeo, horizonMat);
+    group.add(horizon);
+
+    // 2. Photon Ring: Intense glowing border around the event horizon
+    const photonRingGeo = new THREE.TorusGeometry(6.2, 0.22, 16, 64);
+    const photonRingMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.95
+    });
+    const photonRing = new THREE.Mesh(photonRingGeo, photonRingMat);
+    photonRing.rotation.x = Math.PI / 2;
+    group.add(photonRing);
+
+    // 3. Accretion Disk Canvas Texture (Swirling relativistic vortex)
+    const size = 512;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d')!;
+
+    // Draw multi-color swirling spiral vortex
+    const cx = size / 2;
+    const cy = size / 2;
+    const grad = ctx.createRadialGradient(cx, cy, 50, cx, cy, cx);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.15, '#f59e0b');
+    grad.addColorStop(0.4, '#ef4444');
+    grad.addColorStop(0.7, '#8b5cf6');
+    grad.addColorStop(0.9, '#38bdf8');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+
+    // Spiral accretion arms
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 2.5;
+    for (let i = 0; i < 40; i++) {
+      ctx.beginPath();
+      const angle = (i / 40) * Math.PI * 2;
+      for (let r = 60; r < cx; r += 6) {
+        const a = angle + r * 0.04;
+        const px = cx + Math.cos(a) * r;
+        const py = cy + Math.sin(a) * r;
+        if (r === 60) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+
+    const diskTex = new THREE.CanvasTexture(canvas);
+    diskTex.wrapS = THREE.RepeatWrapping;
+    diskTex.wrapT = THREE.RepeatWrapping;
+
+    const accretionGeo = new THREE.RingGeometry(6.2, 28.0, 64);
+    const accretionMat = new THREE.MeshBasicMaterial({
+      map: diskTex,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const accretionDisk = new THREE.Mesh(accretionGeo, accretionMat);
+    accretionDisk.rotation.x = Math.PI / 2;
+    group.add(accretionDisk);
+
+    // 4. Slender Relativistic Jets (North and South poles)
+    const jetGeo = new THREE.CylinderGeometry(0.1, 1.8, 45, 16);
+    const jetMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const jetNorth = new THREE.Mesh(jetGeo, jetMat);
+    jetNorth.position.y = 22;
+    group.add(jetNorth);
+
+    const jetSouth = new THREE.Mesh(jetGeo, jetMat);
+    jetSouth.position.y = -22;
+    group.add(jetSouth);
+
+    // 5. Inward Swirling Vortex Particles
+    const pCount = 800;
+    const pGeo = new THREE.BufferGeometry();
+    const pPos = new Float32Array(pCount * 3);
+    const pCol = new Float32Array(pCount * 3);
+    const c1 = new THREE.Color(0xf59e0b);
+    const c2 = new THREE.Color(0x38bdf8);
+
+    for (let i = 0; i < pCount; i++) {
+      const radius = 6.5 + Math.random() * 32;
+      const angle = Math.random() * Math.PI * 2;
+      const y = (Math.random() - 0.5) * 1.5;
+
+      pPos[i * 3] = Math.cos(angle) * radius;
+      pPos[i * 3 + 1] = y;
+      pPos[i * 3 + 2] = Math.sin(angle) * radius;
+
+      const c = Math.random() > 0.5 ? c1 : c2;
+      pCol[i * 3] = c.r;
+      pCol[i * 3 + 1] = c.g;
+      pCol[i * 3 + 2] = c.b;
+    }
+
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+
+    const pMat = new THREE.PointsMaterial({
+      size: 1.6,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const particles = new THREE.Points(pGeo, pMat);
+    group.add(particles);
+
+    // Start with scale 0 (hidden until triggered)
+    group.scale.set(0.001, 0.001, 0.001);
+    group.visible = false;
+
+    return { group, horizon, accretionDisk, photonRing, particles };
+  }
 }
+

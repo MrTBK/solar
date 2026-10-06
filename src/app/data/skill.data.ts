@@ -80,3 +80,127 @@ export const SKILLS_DATA: SkillCategory[] = [
     ]
   }
 ];
+
+export interface SkillPlanetItem {
+  id: string;
+  name: string;
+  category: string;
+  tagline: string;
+  color: string;
+  emissiveColor: string;
+  textureType: 'industrial' | 'analytics' | 'logistics' | 'mlops' | 'robotics' | 'finance';
+  radius: number;
+  rowX: number; // horizontal placement along X axis (-50 to +50)
+  skills: { name: string; level: string; detail?: string }[];
+  highlight: string;
+}
+
+export const SKILL_PLANETS: SkillPlanetItem[] = [
+  {
+    id: 'skill-python',
+    name: 'PYTHON & DATA PIPELINES',
+    category: 'Data Engineering',
+    tagline: 'Batch ETL, dbt Modeling, Automated Quarantine & Airflow',
+    color: '#38bdf8',
+    emissiveColor: '#0284c7',
+    textureType: 'industrial',
+    radius: 3.2,
+    rowX: -50,
+    highlight: 'ETL Pipelines, dbt transformations, PostgreSQL staging, and Airflow orchestration.',
+    skills: [
+      { name: 'Python', level: 'Advanced', detail: 'Pandas, NumPy, Scikit-Learn, Pygame' },
+      { name: 'dbt Core', level: 'Proficient', detail: 'Star schema models, automated assertions' },
+      { name: 'Apache Airflow', level: 'Proficient', detail: 'DAG scheduling and error retry logic' },
+      { name: 'PostgreSQL', level: 'Advanced', detail: 'Analytical indexing, quarantine tables' }
+    ]
+  },
+  {
+    id: 'skill-bi',
+    name: 'BUSINESS INTELLIGENCE & DWH',
+    category: 'Analytics & Decision Systems',
+    tagline: 'Kimball Dimensional Warehouses, Power BI & SSIS',
+    color: '#fbbf24',
+    emissiveColor: '#d97706',
+    textureType: 'analytics',
+    radius: 3.5,
+    rowX: -30,
+    highlight: 'Enterprise dimensional modeling, DAX performance measures, and multi-source ETL reconciliation.',
+    skills: [
+      { name: 'Power BI', level: 'Advanced', detail: 'DAX measures, interactive executive reports' },
+      { name: 'Data Warehousing', level: 'Advanced', detail: 'Kimball star schemas, Fact/Dim design' },
+      { name: 'Microsoft SQL Server', level: 'Advanced', detail: 'SSMS, SSIS data flows, T-SQL' },
+      { name: 'Data Quality Zone', level: 'Advanced', detail: 'Zero-loss quarantine validation' }
+    ]
+  },
+  {
+    id: 'skill-algorithms',
+    name: 'C++ & ALGORITHMIC SOLVING',
+    category: 'Competitive Programming',
+    tagline: 'Codeforces Specialist, TCPC National Finalist, Graph Theory',
+    color: '#a855f7',
+    emissiveColor: '#7e22ce',
+    textureType: 'mlops',
+    radius: 3.0,
+    rowX: -10,
+    highlight: 'High-speed algorithmic analysis, complex data structures, and ICPC tournament problem decomposition in C++.',
+    skills: [
+      { name: 'C++ (STL)', level: 'Advanced', detail: 'High performance O(NlogN) optimizations' },
+      { name: 'Codeforces Specialist', level: 'Specialist Rank', detail: '200+ solved algorithmic challenges' },
+      { name: 'TCPC Finalist', level: 'Rank 32/100', detail: 'Tunisian Collegiate Programming Contest' },
+      { name: 'Monopoly Hackathon', level: '1st Place', detail: 'TBS Innovation Champion 2026' }
+    ]
+  },
+  {
+    id: 'skill-web',
+    name: 'FULL-STACK & CLOUD SYSTEMS',
+    category: 'Modern Web Engineering',
+    tagline: 'Angular 22, FastAPI Asynchronous APIs, Flask & Docker',
+    color: '#34d399',
+    emissiveColor: '#059669',
+    textureType: 'logistics',
+    radius: 3.1,
+    rowX: 10,
+    highlight: 'Modern reactive frontend architectures, asynchronous microservices, and Docker containerization.',
+    skills: [
+      { name: 'Angular (v17-22+)', level: 'Advanced', detail: 'Standalone signals, Three.js integration' },
+      { name: 'FastAPI', level: 'Proficient', detail: 'Async endpoints, Pydantic data schemas' },
+      { name: 'Flask', level: 'Proficient', detail: 'Enterprise file management & microservices' },
+      { name: 'Docker & Linux', level: 'Proficient', detail: 'Compose networks, Bash automation' }
+    ]
+  },
+  {
+    id: 'skill-robotics',
+    name: 'ROBOTICS & EMBEDDED IoT',
+    category: 'Hardware & Microcontrollers',
+    tagline: 'Arduino, ESP8266, Autonomous Logic, Youth Mentorship',
+    color: '#f97316',
+    emissiveColor: '#ea580c',
+    textureType: 'robotics',
+    radius: 2.9,
+    rowX: 30,
+    highlight: 'Motor controllers, ultrasonic pathfinding, Bluetooth wireless protocols, and hands-on youth engineering training.',
+    skills: [
+      { name: 'Arduino Hardware', level: 'Advanced', detail: 'Motor drivers, sensors, PWM control' },
+      { name: 'ESP8266 & IoT', level: 'Proficient', detail: 'Wireless serial & telemetry' },
+      { name: 'Robotics Trainer', level: 'Lead Trainer', detail: 'Youth Yes We Care Association mentor' },
+      { name: 'Circuits & Schematics', level: 'Proficient', detail: 'Breadboard prototyping, H-Bridges' }
+    ]
+  },
+  {
+    id: 'skill-mobile',
+    name: 'MOBILE & OFFLINE ARCHITECTURE',
+    category: 'Mobile Application',
+    tagline: 'Flutter Cross-Platform, SQLite Local Storage, RTL/LTR',
+    color: '#2dd4bf',
+    emissiveColor: '#0d9488',
+    textureType: 'finance',
+    radius: 2.7,
+    rowX: 50,
+    highlight: 'Zero-cloud offline-first architectures, encrypted local SQLite persistence, and multilingual Arabic/English layouts.',
+    skills: [
+      { name: 'Flutter & Dart', level: 'Proficient', detail: 'Cross-platform reactive UI architecture' },
+      { name: 'SQLite Storage', level: 'Proficient', detail: 'Zero-latency local database persistence' },
+      { name: 'Multilingual i18n', level: 'Advanced', detail: 'Native Arabic RTL, French, English' }
+    ]
+  }
+];
