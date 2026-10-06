@@ -17,6 +17,7 @@ export interface SceneObjectRecord {
   currentAngle: number;
   satellites: { group: THREE.Group; speed: number; angle: number }[];
   atmosphere?: THREE.Mesh;
+  rowPos?: THREE.Vector3;
   initialScale: THREE.Vector3;
   initialLocalPos: THREE.Vector3;
 }
@@ -26,7 +27,13 @@ export interface SkillPlanetRecord {
   mesh: THREE.Mesh;
   label: THREE.Sprite;
   atmosphere: THREE.Mesh;
-  initialPos: THREE.Vector3;
+  pivot: THREE.Group;
+  orbitLine: THREE.Line;
+  orbitDistance: number;
+  orbitSpeed: number;
+  elevation: number;
+  currentAngle: number;
+  rowPos: THREE.Vector3;
   initialScale: THREE.Vector3;
 }
 
@@ -64,11 +71,27 @@ export class SolarSceneService {
   private devouredNotified = false;
   private blackHoleShakeIntensity = 0;
 
+  // Tri-Sector Galaxy Alignment Constants
+  public static readonly SECTOR_ANGLES = {
+    projects: -Math.PI / 6,              // -30° (Top-Right corridor)
+    work: Math.PI / 2,                   // +90° (Bottom/Front corridor)
+    skills: (7 * Math.PI) / 6            // 210° (Top-Left corridor)
+  };
+  private galaxyRotationAngle = 0;
+
   // Special animated objects
   private sunMesh: THREE.Mesh | null = null;
   private sunGlow: THREE.Sprite | null = null;
   private asteroidBeltGroup: THREE.Group | null = null;
   private starfieldPoints: THREE.Points | null = null;
+  private nebulaPoints: THREE.Points | null = null;
+  private solarProminences: THREE.Group | null = null;
+  private comet: { group: THREE.Group; head: THREE.Mesh } | null = null;
+  private cometActive = false;
+  private cometTimer = 0;
+  private cometProgress = 0;
+  private cometStart = new THREE.Vector3();
+  private cometEnd = new THREE.Vector3();
 
   constructor() {
     // React to row mode changes
@@ -85,6 +108,12 @@ export class SolarSceneService {
         this.restoreUniverse();
       }
     });
+
+    // React to quality level changes
+    effect(() => {
+      const q = this.state.qualityLevel();
+      this.applyQualityLevel(q);
+    });
   }
 
   public init(canvas: HTMLCanvasElement): void {
@@ -99,16 +128,20 @@ export class SolarSceneService {
     this.cameraService.init(canvas);
 
     // 3. WebGL Renderer
-    this.renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: !this.device.isMobile(),
-      powerPreference: 'high-performance',
-      alpha: false
-    });
-    this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-    this.renderer.setPixelRatio(this.device.getRecommendedDPR());
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.25;
+    try {
+      this.renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: !this.device.isMobile(),
+        powerPreference: 'high-performance',
+        alpha: false
+      });
+      this.renderer.setSize(canvas.clientWidth || 800, canvas.clientHeight || 600);
+      this.renderer.setPixelRatio(this.device.getRecommendedDPR());
+      this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      this.renderer.toneMappingExposure = 1.25;
+    } catch {
+      return;
+    }
 
     // 4. Lighting & Starfield
     this.setupLighting();
@@ -176,6 +209,10 @@ export class SolarSceneService {
 
     this.starfieldPoints = new THREE.Points(geometry, material);
     this.scene.add(this.starfieldPoints);
+
+    // Deep space procedural nebulae
+    this.nebulaPoints = this.factory.createNebulaField();
+    this.scene.add(this.nebulaPoints);
   }
 
   private buildSystem(): void {
@@ -203,6 +240,9 @@ export class SolarSceneService {
         this.sunGlow = this.factory.createSunGlowSprite('#f59e0b', 256);
         sun.add(this.sunGlow);
 
+        this.solarProminences = this.factory.createSolarProminences(config.radius);
+        sun.add(this.solarProminences);
+
         mainMesh.position.set(0, 0, 0);
         pivot.add(mainMesh);
       } else if (config.type === 'station') {
@@ -228,6 +268,7 @@ export class SolarSceneService {
           emissiveIntensity: 0.12
         });
         const planet = new THREE.Mesh(planetGeo, planetMat);
+        planet.rotation.z = 0.22; // subtle realistic axial tilt
         mainMesh = planet;
         mainMesh.position.set(config.orbitDistance, 0, 0);
 
@@ -275,8 +316,30 @@ export class SolarSceneService {
       (mainMesh as unknown as { celestialId: string; celestialConfig: CelestialBodyConfig }).celestialConfig = config;
       this.interactiveMeshes.push(mainMesh);
 
-      const startAngle = Math.random() * Math.PI * 2;
-      pivot.rotation.y = startAngle;
+      let startAngle = 0;
+      if (config.type === 'sun') {
+        startAngle = 0;
+      } else if (
+        config.id === 'station-coficab' ||
+        config.id === 'planet-robotics' ||
+        config.id === 'belt-competitive' ||
+        config.id === 'station-education'
+      ) {
+        startAngle = SolarSceneService.SECTOR_ANGLES.work;
+      } else {
+        startAngle = SolarSceneService.SECTOR_ANGLES.projects;
+      }
+      const systemRowPositions: Record<string, number> = {
+        'planet-dataforge': -16,
+        'station-coficab': -30,
+        'planet-customer360': -44,
+        'planet-supplychainiq': -58,
+        'planet-robotics': -72,
+        'planet-churnlab': -86,
+        'belt-competitive': -100,
+        'planet-masroufi': -114,
+        'station-education': -128
+      };
 
       this.objects.set(config.id, {
         config,
@@ -287,20 +350,46 @@ export class SolarSceneService {
         currentAngle: startAngle,
         satellites: satList,
         atmosphere,
+        rowPos: config.type === 'sun' ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(systemRowPositions[config.id] ?? -config.orbitDistance, 0, 0),
         initialScale: mainMesh.scale.clone(),
         initialLocalPos: mainMesh.position.clone()
       });
     });
+
+    // Setup Comet Group
+    this.comet = this.factory.createCometGroup();
+    this.comet.group.visible = false;
+    this.scene.add(this.comet.group);
   }
 
-  // --- BUILD SKILLS PLANETS IN A ROW ---
+  // --- BUILD SKILLS PLANETS WITH ORBITS & ROW DUAL-MODE ---
+
+  private skillOrbitParams: Record<string, { orbitDistance: number; orbitSpeed: number; elevation: number }> = {
+    'skill-python': { orbitDistance: 22, orbitSpeed: 0.002, elevation: 0 },
+    'skill-bi': { orbitDistance: 34, orbitSpeed: 0.002, elevation: 0 },
+    'skill-algorithms': { orbitDistance: 46, orbitSpeed: 0.002, elevation: 0 },
+    'skill-web': { orbitDistance: 58, orbitSpeed: 0.002, elevation: 0 },
+    'skill-robotics': { orbitDistance: 70, orbitSpeed: 0.002, elevation: 0 },
+    'skill-mobile': { orbitDistance: 82, orbitSpeed: 0.002, elevation: 0 }
+  };
 
   private buildSkillPlanetsRow(): void {
     this.skillPlanetRecords.clear();
     this.skillPlanetsGroup.clear();
     this.scene.add(this.skillPlanetsGroup);
 
-    SKILL_PLANETS.forEach((item) => {
+    SKILL_PLANETS.forEach((item, index) => {
+      const orbitParam = this.skillOrbitParams[item.id] || {
+        orbitDistance: 22 + index * 12,
+        orbitSpeed: 0.002,
+        elevation: 0
+      };
+
+      const pivot = new THREE.Group();
+      const startAngle = SolarSceneService.SECTOR_ANGLES.skills;
+      pivot.rotation.y = startAngle;
+      this.scene.add(pivot);
+
       const geo = new THREE.SphereGeometry(item.radius, 36, 36);
       const mat = new THREE.MeshStandardMaterial({
         map: this.factory.createPlanetTexture(item.textureType, item.color),
@@ -310,7 +399,7 @@ export class SolarSceneService {
         emissiveIntensity: 0.18
       });
       const mesh = new THREE.Mesh(geo, mat);
-      mesh.position.set(item.rowX, 0, 0);
+      mesh.position.set(orbitParam.orbitDistance, orbitParam.elevation, 0);
 
       // Atmosphere glow
       const atmosphere = this.factory.createAtmosphereGlow(item.radius, item.color);
@@ -339,20 +428,31 @@ export class SolarSceneService {
       (mesh as unknown as { isSkillPlanet: boolean; skillPlanetConfig: SkillPlanetItem }).skillPlanetConfig = item;
       this.interactiveMeshes.push(mesh);
 
-      this.skillPlanetsGroup.add(mesh);
+      pivot.add(mesh);
+
+      // Colored orbit line around Sun
+      const orbitLine = this.factory.createOrbitLine(orbitParam.orbitDistance, item.color);
+      orbitLine.position.y = orbitParam.elevation;
+      this.scene.add(orbitLine);
 
       this.skillPlanetRecords.set(item.id, {
         config: item,
         mesh,
         label,
         atmosphere,
-        initialPos: new THREE.Vector3(item.rowX, 0, 0),
+        pivot,
+        orbitLine,
+        orbitDistance: orbitParam.orbitDistance,
+        orbitSpeed: orbitParam.orbitSpeed,
+        elevation: orbitParam.elevation,
+        currentAngle: startAngle,
+        rowPos: new THREE.Vector3(item.rowX, 0, 0),
         initialScale: mesh.scale.clone()
       });
     });
 
-    // By default, skills row is hidden until toggled or in skills row mode
-    this.skillPlanetsGroup.visible = false;
+    // Skill planets are ALWAYS active and visible in the solar system
+    this.skillPlanetsGroup.visible = true;
   }
 
   // --- BUILD BLACK HOLE ---
@@ -364,11 +464,29 @@ export class SolarSceneService {
   }
 
   public handleSkillsRowMode(isRow: boolean): void {
-    this.skillPlanetsGroup.visible = isRow;
     if (isRow) {
-      // Camera moves to wide front view of the row
-      this.cameraService.flyTo(new THREE.Vector3(0, 0, 0), 85, 22, null);
+      // Camera moves to wide front view framing the entire aligned fleet of planets
+      this.cameraService.flyTo(new THREE.Vector3(0, 0, 0), 160, 32, null);
+    } else {
+      if (!this.state.selectedTarget() && !this.state.activeSkillPlanet()) {
+        this.cameraService.flyToOverview();
+      }
     }
+  }
+
+  public focusSkillPlanet(id: string): void {
+    const record = this.skillPlanetRecords.get(id);
+    if (!record) return;
+
+    const worldPos = new THREE.Vector3();
+    record.mesh.getWorldPosition(worldPos);
+
+    this.cameraService.flyTo(
+      worldPos,
+      13,
+      3.5,
+      record.mesh
+    );
   }
 
   public restoreUniverse(): void {
@@ -383,22 +501,30 @@ export class SolarSceneService {
       rec.mesh.position.copy(rec.initialLocalPos);
       rec.mesh.scale.copy(rec.initialScale);
       rec.mesh.visible = true;
-      // Re-randomize start angle so it doesn't snap back obviously
-      const newAngle = Math.random() * Math.PI * 2;
-      rec.pivot.rotation.y = newAngle;
-      rec.currentAngle = newAngle;
+      const isWork =
+        rec.config.id === 'station-coficab' ||
+        rec.config.id === 'planet-robotics' ||
+        rec.config.id === 'belt-competitive' ||
+        rec.config.id === 'station-education';
+      const baseAngle = isWork ? SolarSceneService.SECTOR_ANGLES.work : SolarSceneService.SECTOR_ANGLES.projects;
+      rec.pivot.rotation.y = this.galaxyRotationAngle + baseAngle;
+      rec.currentAngle = rec.pivot.rotation.y;
       if (rec.orbitLine) {
         rec.orbitLine.visible = this.state.showOrbitLines();
       }
     });
 
-    // Restore skill planets, but keep group hidden (skills row mode was reset)
+    // Restore skill planets
     this.skillPlanetRecords.forEach((rec) => {
-      rec.mesh.position.copy(rec.initialPos);
+      rec.mesh.position.set(rec.orbitDistance, rec.elevation, 0);
       rec.mesh.scale.copy(rec.initialScale);
       rec.mesh.visible = true;
+      rec.pivot.rotation.y = this.galaxyRotationAngle + SolarSceneService.SECTOR_ANGLES.skills;
+      rec.currentAngle = rec.pivot.rotation.y;
+      if (rec.orbitLine) {
+        rec.orbitLine.visible = this.state.showOrbitLines();
+      }
     });
-    this.skillPlanetsGroup.visible = false;
 
     this.cameraService.flyToOverview();
   }
@@ -453,13 +579,28 @@ export class SolarSceneService {
         this.skillPlanetRecords.forEach((rec) => {
           if (rec.mesh.scale.x > 0.02) {
             totalRemaining++;
-            rec.mesh.position.lerp(new THREE.Vector3(0, 0, 0), delta * 1.8);
-            const dist = rec.mesh.position.length();
-            if (dist < 22) {
-              rec.mesh.scale.multiplyScalar(Math.max(0.01, 1 - delta * 3.2));
+            if (rec.orbitLine) {
+              rec.orbitLine.visible = false;
             }
-            if (dist < 5.0) {
+            const worldPos = new THREE.Vector3();
+            rec.mesh.getWorldPosition(worldPos);
+            const distToCenter = worldPos.length();
+
+            const pullStrength = Math.max(0.3, 6 / (distToCenter + 1));
+            rec.pivot.rotation.y += pullStrength * delta;
+
+            const localX = rec.mesh.position.x;
+            if (Math.abs(localX) > 0.5) {
+              rec.mesh.position.x = localX * Math.max(0.01, 1 - delta * 1.8);
+            }
+            rec.mesh.position.y = rec.mesh.position.y * Math.max(0.01, 1 - delta * 1.8);
+
+            if (distToCenter < 28) {
+              rec.mesh.scale.multiplyScalar(Math.max(0.01, 1 - delta * 2.8));
+            }
+            if (distToCenter < 6.0 || rec.mesh.scale.x < 0.02) {
               rec.mesh.scale.set(0.0001, 0.0001, 0.0001);
+              rec.mesh.position.set(0, 0, 0);
             }
           }
         });
@@ -511,6 +652,11 @@ export class SolarSceneService {
       } else {
         // --- NORMAL ORBITAL & ROW ROTATIONS ---
         this.blackHoleShakeIntensity = 0;
+
+        if (speedMult > 0 && !isRowMode) {
+          this.galaxyRotationAngle += 0.0016 * speedMult * 0.5;
+        }
+
         this.objects.forEach((record) => {
           const { config, pivot, mesh, satellites, orbitLine, labelSprite } = record;
 
@@ -522,8 +668,31 @@ export class SolarSceneService {
             labelSprite.visible = showLabels;
           }
 
-          if (config.orbitSpeed > 0 && speedMult > 0 && !isRowMode) {
-            pivot.rotation.y += config.orbitSpeed * speedMult * 0.5;
+          if (config.type !== 'sun') {
+            if (isRowMode) {
+              // Smoothly lerp pivot rotation to 0 for linear syzygy alignment
+              const angleDiff = Math.atan2(Math.sin(0 - pivot.rotation.y), Math.cos(0 - pivot.rotation.y));
+              pivot.rotation.y += angleDiff * 0.08;
+
+              // Smoothly lerp mesh to row position
+              if (record.rowPos) {
+                mesh.position.lerp(record.rowPos, 0.08);
+              }
+            } else {
+              // Smoothly restore to orbital position & sector angle
+              const isWork =
+                config.id === 'station-coficab' ||
+                config.id === 'planet-robotics' ||
+                config.id === 'belt-competitive' ||
+                config.id === 'station-education';
+              const baseAngle = isWork ? SolarSceneService.SECTOR_ANGLES.work : SolarSceneService.SECTOR_ANGLES.projects;
+              const targetAngle = this.galaxyRotationAngle + baseAngle;
+              const angleDiff = Math.atan2(Math.sin(targetAngle - pivot.rotation.y), Math.cos(targetAngle - pivot.rotation.y));
+              pivot.rotation.y += angleDiff * 0.08;
+
+              // Smoothly restore mesh to original orbital distance
+              mesh.position.lerp(record.initialLocalPos, 0.08);
+            }
           }
 
           if (config.rotationSpeed > 0) {
@@ -536,23 +705,49 @@ export class SolarSceneService {
           });
         });
 
-        // Rotate Skill Planets in their row
-        if (isRowMode) {
-          this.skillPlanetRecords.forEach((rec) => {
-            rec.mesh.rotation.y += 0.012;
-            rec.label.visible = showLabels;
-          });
-        }
+        // Animate Skill Planets (Seamless Orbit <-> Row Mode)
+        this.skillPlanetRecords.forEach((rec) => {
+          const { mesh, pivot, orbitLine, label } = rec;
+
+          if (orbitLine) {
+            orbitLine.visible = showOrbits && !isRowMode;
+          }
+          if (label) {
+            label.visible = showLabels;
+          }
+
+          mesh.rotation.y += 0.012; // Planet axial spin
+
+          if (isRowMode) {
+            // Lerp pivot rotation to 0 for flat horizontal alignment along world X
+            const angleDiff = Math.atan2(Math.sin(0 - pivot.rotation.y), Math.cos(0 - pivot.rotation.y));
+            pivot.rotation.y += angleDiff * 0.08;
+
+            // Lerp mesh to row position (rowX, 0, 0)
+            mesh.position.lerp(rec.rowPos, 0.08);
+          } else {
+            // In orbital mode: synchronized along Skills Arm corridor
+            const targetAngle = this.galaxyRotationAngle + SolarSceneService.SECTOR_ANGLES.skills;
+            const angleDiff = Math.atan2(Math.sin(targetAngle - pivot.rotation.y), Math.cos(targetAngle - pivot.rotation.y));
+            pivot.rotation.y += angleDiff * 0.08;
+
+            // Lerp mesh to orbital distance & elevation
+            const targetOrbitalPos = new THREE.Vector3(rec.orbitDistance, rec.elevation, 0);
+            mesh.position.lerp(targetOrbitalPos, 0.08);
+          }
+        });
       }
+
+      const isTour = this.state.isTourActive();
 
       // Animate Sun & Flares
       if (this.sunMesh) {
         this.sunMesh.rotation.y += 0.002;
       }
       if (this.sunGlow) {
-        // Scale glow relative to camera distance: closer = smaller so it doesn't occlude
+        // Scale glow relative to camera distance & tour mode
         const camDist = this.cameraService.camera.position.length();
-        const distScale = Math.max(0.3, Math.min(1.0, (camDist - 30) / 80));
+        const distScale = Math.max(0.3, Math.min(1.0, (camDist - 30) / 80)) * (isTour ? 0.6 : 1.0);
         const pulse = (26 + Math.sin((now / 1000) * 1.8) * 1.2) * distScale;
         this.sunGlow.scale.set(pulse, pulse, 1);
       }
@@ -565,6 +760,79 @@ export class SolarSceneService {
       // Starfield drift
       if (this.starfieldPoints) {
         this.starfieldPoints.rotation.y += 0.00008;
+      }
+
+      // Nebula drift
+      if (this.nebulaPoints) {
+        this.nebulaPoints.rotation.y += 0.00003;
+      }
+
+      // Solar prominences rotation
+      if (this.solarProminences) {
+        this.solarProminences.rotation.y += 0.0025;
+      }
+
+      // Comet shooting star animation
+      if (!this.cometActive && this.comet && !isBlackHole) {
+        this.cometTimer += delta;
+        if (this.cometTimer > 18) {
+          this.launchComet();
+        }
+      } else if (this.cometActive && this.comet) {
+        this.cometProgress += delta * 0.45;
+        if (this.cometProgress >= 1) {
+          this.cometActive = false;
+          this.comet.group.visible = false;
+          this.cometTimer = 0;
+        } else {
+          this.comet.group.position.lerpVectors(this.cometStart, this.cometEnd, this.cometProgress);
+        }
+      }
+
+      // Dynamic Scaling: Tour Mode (smaller planets for better framing) & Tech Stack filters
+      const activeTech = this.state.activeTechFilter();
+      if (!isBlackHole && !isRowMode) {
+        this.objects.forEach((rec) => {
+          let scaleFactor = 1.0;
+          if (isTour) {
+            scaleFactor = rec.config.type === 'sun' ? 0.65 : 0.55;
+          } else if (activeTech && rec.config.type !== 'sun') {
+            const matches = this.state.isBodyMatchingTech(rec.config.id);
+            scaleFactor = matches ? 1.15 : 0.65;
+          }
+
+          rec.mesh.scale.lerp(rec.initialScale.clone().multiplyScalar(scaleFactor), 0.1);
+        });
+
+        this.skillPlanetRecords.forEach((rec) => {
+          const scaleFactor = isTour ? 0.55 : 1.0;
+          rec.mesh.scale.lerp(rec.initialScale.clone().multiplyScalar(scaleFactor), 0.1);
+        });
+      }
+
+      // Adaptive FPS Watchdog
+      this.fpsFrames++;
+      if (this.fpsFrames >= 120) {
+        const now = performance.now();
+        const elapsedSec = (now - this.fpsLastTime) / 1000;
+        const fps = this.fpsFrames / elapsedSec;
+        this.fpsFrames = 0;
+        this.fpsLastTime = now;
+
+        if (fps < 25) {
+          this.lowFpsCounter++;
+          if (this.lowFpsCounter >= 2) {
+            const cur = this.state.qualityLevel();
+            if (cur === 'HIGH') {
+              this.state.setQualityLevel('MEDIUM');
+            } else if (cur === 'MEDIUM') {
+              this.state.setQualityLevel('LOW');
+            }
+            this.lowFpsCounter = 0;
+          }
+        } else {
+          this.lowFpsCounter = 0;
+        }
       }
 
       // Camera flight update
@@ -588,12 +856,72 @@ export class SolarSceneService {
     animate();
   }
 
+  private fpsFrames = 0;
+  private fpsLastTime = performance.now();
+  private lowFpsCounter = 0;
+
+  private applyQualityLevel(level: 'HIGH' | 'MEDIUM' | 'LOW'): void {
+    if (!this.renderer) return;
+    if (level === 'LOW') {
+      this.renderer.setPixelRatio(1.0);
+      if (this.nebulaPoints) this.nebulaPoints.visible = false;
+      if (this.asteroidBeltGroup) this.asteroidBeltGroup.visible = false;
+    } else if (level === 'MEDIUM') {
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+      if (this.nebulaPoints) this.nebulaPoints.visible = true;
+      if (this.asteroidBeltGroup) this.asteroidBeltGroup.visible = true;
+    } else {
+      this.renderer.setPixelRatio(this.device.getRecommendedDPR());
+      if (this.nebulaPoints) this.nebulaPoints.visible = true;
+      if (this.asteroidBeltGroup) this.asteroidBeltGroup.visible = true;
+    }
+  }
+
+  private launchComet(): void {
+    if (!this.comet) return;
+    this.cometActive = true;
+    this.cometProgress = 0;
+
+    const angle = Math.random() * Math.PI * 2;
+    const rStart = 160 + Math.random() * 40;
+    const rEnd = 160 + Math.random() * 40;
+    this.cometStart.set(Math.cos(angle) * rStart, 25 + Math.random() * 20, Math.sin(angle) * rStart);
+    this.cometEnd.set(-Math.cos(angle) * rEnd, -20 - Math.random() * 20, -Math.sin(angle) * rEnd);
+
+    this.comet.group.position.copy(this.cometStart);
+    this.comet.group.lookAt(this.cometEnd);
+    this.comet.group.visible = true;
+  }
+
   public destroy(): void {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
     }
+
+    if (this.scene) {
+      this.scene.traverse((obj) => {
+        if ((obj as THREE.Mesh).geometry) {
+          (obj as THREE.Mesh).geometry.dispose();
+        }
+        if ((obj as THREE.Mesh).material) {
+          const mat = (obj as THREE.Mesh).material as any;
+          if (Array.isArray(mat)) {
+            mat.forEach((m) => {
+              if (m?.map) m.map.dispose();
+              m?.dispose();
+            });
+          } else {
+            if (mat?.map) mat.map.dispose();
+            mat?.dispose();
+          }
+        }
+      });
+    }
+
     if (this.renderer) {
       this.renderer.dispose();
+      this.renderer.forceContextLoss();
     }
   }
 }

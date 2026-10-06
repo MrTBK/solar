@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StateService } from '../../core/services/state.service';
+import { AudioService } from '../../core/services/audio.service';
 import { CELESTIAL_BODIES } from '../../data/celestial.data';
 import { CelestialBodyConfig } from '../../models/celestial.model';
 
@@ -11,7 +12,7 @@ import { CelestialBodyConfig } from '../../models/celestial.model';
   template: `
     @if (isOpen()) {
       <aside
-        class="fixed top-18 right-3 z-35 w-[340px] max-w-[calc(100vw-24px)] rounded-2xl border border-cyan-500/30 bg-slate-950/90 p-4 shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-xl md:right-6"
+        class="fixed top-18 right-3 z-35 w-[360px] max-w-[calc(100vw-24px)] rounded-2xl border border-cyan-500/30 bg-slate-950/92 p-4 shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-xl md:right-6 animate-fade-in"
       >
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -49,6 +50,55 @@ import { CelestialBodyConfig } from '../../models/celestial.model';
           <div class="rounded-lg border border-slate-800/80 bg-slate-900/60 p-2">
             <div class="text-[9px] text-slate-400 uppercase">Core Temperature</div>
             <div class="mt-0.5 font-semibold text-rose-300">{{ telemetry().temperature }}</div>
+          </div>
+        </div>
+
+        <!-- Guided Autopilot Tour -->
+        <div class="mt-4 border-t border-slate-800/80 pt-3">
+          <div class="flex items-center justify-between font-mono text-[10px] text-slate-400">
+            <span>GUIDED AUTOPILOT TOUR</span>
+            <span [class.text-amber-400]="isTourActive()" class="font-bold">
+              {{ isTourActive() ? 'RUNNING' : 'STANDBY' }}
+            </span>
+          </div>
+          <button
+            (click)="toggleTour()"
+            [class.border-amber-400]="isTourActive()"
+            [class.bg-amber-500/20]="isTourActive()"
+            [class.text-amber-300]="isTourActive()"
+            class="mt-2 w-full rounded-lg border border-slate-800 bg-slate-900/70 py-1.5 font-mono text-xs font-bold text-slate-300 transition-colors hover:border-amber-400 hover:text-white"
+          >
+            🚀 {{ isTourActive() ? 'STOP AUTOPILOT TOUR' : 'START CINEMATIC TOUR' }}
+          </button>
+        </div>
+
+        <!-- Tech Stack 3D Filter -->
+        <div class="mt-4 border-t border-slate-800/80 pt-3">
+          <div class="flex items-center justify-between font-mono text-[10px] text-slate-400">
+            <span>TECH STACK 3D FILTER</span>
+            @if (activeTechFilter()) {
+              <button
+                (click)="clearTechFilter()"
+                class="text-cyan-400 hover:text-white underline text-[9px] cursor-pointer"
+              >
+                RESET ✕
+              </button>
+            }
+          </div>
+          <div class="mt-2 flex flex-wrap gap-1 font-mono text-[10px]">
+            @for (tech of availableTechs; track tech) {
+              <button
+                (click)="setTechFilter(tech)"
+                [class.bg-cyan-500]="activeTechFilter() === tech"
+                [class.text-slate-950]="activeTechFilter() === tech"
+                [class.font-bold]="activeTechFilter() === tech"
+                [class.bg-slate-900]="activeTechFilter() !== tech"
+                [class.text-slate-300]="activeTechFilter() !== tech"
+                class="rounded-md border border-slate-700/60 px-2 py-0.5 transition-colors hover:border-cyan-400"
+              >
+                {{ tech }}
+              </button>
+            }
           </div>
         </div>
 
@@ -100,7 +150,7 @@ import { CelestialBodyConfig } from '../../models/celestial.model';
           <div class="font-mono text-[10px] tracking-wider text-slate-400 uppercase">
             CELESTIAL RADAR [CLICK TO INTERCEPT]
           </div>
-          <div class="mt-2 max-h-48 space-y-1 overflow-y-auto pr-1">
+          <div class="mt-2 max-h-40 space-y-1 overflow-y-auto pr-1">
             @for (body of celestialBodies; track body.id) {
               <button
                 (click)="selectBody(body)"
@@ -126,11 +176,12 @@ import { CelestialBodyConfig } from '../../models/celestial.model';
         <!-- Shortcuts footer -->
         <div class="mt-3 border-t border-slate-800/80 pt-2 font-mono text-[9px] text-slate-400 leading-relaxed">
           <span class="text-slate-200">[ESC/SPACE]</span> Return ·
+          <span class="text-slate-200">[P]</span> Tour ·
+          <span class="text-slate-200">[H]</span> Drone ·
+          <span class="text-slate-200">[WASD/Arrows]</span> Orbit ·
+          <span class="text-slate-200">[+/-]</span> Zoom ·
           <span class="text-slate-200">[1-9]</span> Jump ·
-          <span class="text-slate-200">[M]</span> Audio ·
-          <span class="text-slate-200">[T]</span> Orbits ·
-          <span class="text-slate-200">[L]</span> Labels ·
-          <span class="text-slate-200">[R]</span> Skills Row
+          <span class="text-slate-200">[R]</span> Row
         </div>
       </aside>
     }
@@ -138,8 +189,10 @@ import { CelestialBodyConfig } from '../../models/celestial.model';
 })
 export class MissionControlComponent {
   private state = inject(StateService);
+  private audio = inject(AudioService);
 
   public celestialBodies = CELESTIAL_BODIES;
+  public availableTechs = this.state.availableTechFilters;
 
   public isOpen = computed(() => this.state.isMissionControlOpen());
   public telemetry = computed(() => this.state.telemetry());
@@ -147,6 +200,8 @@ export class MissionControlComponent {
   public showOrbits = computed(() => this.state.showOrbitLines());
   public showLabels = computed(() => this.state.showLabels());
   public selectedBody = computed(() => this.state.selectedTarget());
+  public isTourActive = computed(() => this.state.isTourActive());
+  public activeTechFilter = computed(() => this.state.activeTechFilter());
 
   public close(): void {
     this.state.isMissionControlOpen.set(false);
@@ -166,5 +221,21 @@ export class MissionControlComponent {
 
   public selectBody(body: CelestialBodyConfig): void {
     this.state.selectTarget(body, true);
+  }
+
+  public toggleTour(): void {
+    if (this.state.isTourActive()) {
+      this.state.stopTour();
+    } else {
+      this.state.startTour();
+    }
+  }
+
+  public setTechFilter(tech: string): void {
+    this.state.setTechFilter(tech);
+  }
+
+  public clearTechFilter(): void {
+    this.state.setTechFilter(null);
   }
 }

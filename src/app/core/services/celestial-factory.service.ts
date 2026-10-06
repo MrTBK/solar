@@ -96,6 +96,137 @@ export class CelestialFactoryService {
     return sprite;
   }
 
+  public createNebulaField(count = 240): THREE.Points {
+    const geo = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+
+    const cCyan = new THREE.Color(0x06b6d4);
+    const cPurple = new THREE.Color(0x9333ea);
+    const cAmber = new THREE.Color(0xd97706);
+    const cIndigo = new THREE.Color(0x3b82f6);
+
+    for (let i = 0; i < count; i++) {
+      const sector = i % 3;
+      const baseAngle = sector * ((Math.PI * 2) / 3);
+      const angle = baseAngle + (Math.random() - 0.5) * 1.2;
+      const r = 450 + Math.random() * 450;
+      const elevation = (Math.random() - 0.5) * 350;
+
+      positions[i * 3] = Math.cos(angle) * r;
+      positions[i * 3 + 1] = elevation;
+      positions[i * 3 + 2] = Math.sin(angle) * r;
+
+      const pick = Math.random();
+      const col = sector === 0 ? (pick > 0.4 ? cCyan : cIndigo) : sector === 1 ? (pick > 0.4 ? cPurple : cIndigo) : cAmber;
+      colors[i * 3] = col.r;
+      colors[i * 3 + 1] = col.g;
+      colors[i * 3 + 2] = col.b;
+    }
+
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d')!;
+    const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+    grad.addColorStop(0.35, 'rgba(255, 255, 255, 0.4)');
+    grad.addColorStop(0.7, 'rgba(255, 255, 255, 0.08)');
+    grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
+
+    const texture = new THREE.CanvasTexture(canvas);
+
+    const mat = new THREE.PointsMaterial({
+      size: 48.0,
+      map: texture,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.16,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      sizeAttenuation: true
+    });
+
+    return new THREE.Points(geo, mat);
+  }
+
+  public createSolarProminences(sunRadius = 7.0): THREE.Group {
+    const group = new THREE.Group();
+    for (let i = 0; i < 3; i++) {
+      const angle = (i * Math.PI * 2) / 3 + 0.4;
+      const points: THREE.Vector3[] = [];
+      const steps = 24;
+      const height = sunRadius + 1.2 + Math.random() * 0.8;
+      const span = 0.35;
+
+      for (let s = 0; s <= steps; s++) {
+        const t = s / steps;
+        const currentAngle = angle + (t - 0.5) * span;
+        const r = sunRadius + Math.sin(t * Math.PI) * (height - sunRadius);
+        const y = Math.sin(t * Math.PI) * 0.6 * (i % 2 === 0 ? 1 : -1);
+        points.push(new THREE.Vector3(Math.cos(currentAngle) * r, y, Math.sin(currentAngle) * r));
+      }
+
+      const curve = new THREE.CatmullRomCurve3(points);
+      const tubeGeo = new THREE.TubeGeometry(curve, 20, 0.08, 6, false);
+      const tubeMat = new THREE.MeshBasicMaterial({
+        color: 0xffedd5,
+        transparent: true,
+        opacity: 0.7,
+        blending: THREE.AdditiveBlending
+      });
+      group.add(new THREE.Mesh(tubeGeo, tubeMat));
+    }
+    return group;
+  }
+
+  public createCometGroup(): { group: THREE.Group; head: THREE.Mesh } {
+    const group = new THREE.Group();
+    const headGeo = new THREE.SphereGeometry(0.35, 12, 12);
+    const headMat = new THREE.MeshBasicMaterial({
+      color: 0xa5f3fc,
+      transparent: true,
+      opacity: 0.95
+    });
+    const head = new THREE.Mesh(headGeo, headMat);
+    group.add(head);
+
+    const glowSprite = this.createSunGlowSprite('#38bdf8', 128);
+    glowSprite.scale.set(4.0, 4.0, 1);
+    head.add(glowSprite);
+
+    const tailCount = 40;
+    const tailGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(tailCount * 3);
+
+    for (let i = 0; i < tailCount; i++) {
+      const dist = (i / tailCount) * 14.0;
+      positions[i * 3] = -dist;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 0.4 * (dist / 4);
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.4 * (dist / 4);
+    }
+    tailGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const tailMat = new THREE.PointsMaterial({
+      size: 1.0,
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.75,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    const tail = new THREE.Points(tailGeo, tailMat);
+    group.add(tail);
+
+    return { group, head };
+  }
+
   public createPlanetTexture(type: CelestialBodyConfig['textureType'], baseHex: string): THREE.CanvasTexture {
     const key = `planet_${type}_${baseHex}`;
     if (this.textureCache.has(key)) return this.textureCache.get(key)!;

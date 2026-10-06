@@ -36,10 +36,20 @@ export class InteractionService {
     // React to selectedTarget changes (e.g. from nav clicks)
     effect(() => {
       const target = this.state.selectedTarget();
+      const sp = this.state.activeSkillPlanet();
       if (target) {
         this.focusOnTarget(target);
-      } else if (!this.state.isSkillsRowMode() && !this.state.isBlackHoleActive()) {
+      } else if (!sp && !this.state.isSkillsRowMode() && !this.state.isBlackHoleActive()) {
         this.cameraService.flyToOverview();
+      }
+    });
+
+    // React to activeSkillPlanet changes (e.g. from tracker pips, radar, or modal navigation)
+    effect(() => {
+      const sp = this.state.activeSkillPlanet();
+      const modal = this.state.activeModal();
+      if (sp && modal === 'skill-planet') {
+        this.solarScene.focusSkillPlanet(sp.id);
       }
     });
   }
@@ -49,6 +59,14 @@ export class InteractionService {
     canvas.addEventListener('pointerdown', (e) => this.onPointerDown(e));
     canvas.addEventListener('pointerup', (e) => this.onPointerUp(e, canvas));
     window.addEventListener('keydown', (e) => this.onKeyDown(e));
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', () => {
+      const path = window.location.pathname;
+      if (!path || path === '/') {
+        this.state.returnToSystem();
+      }
+    });
   }
 
   private onPointerDown(e: MouseEvent): void {
@@ -148,7 +166,7 @@ export class InteractionService {
           target.mesh.getWorldPosition(worldPos);
           this.cameraService.flyTo(worldPos, 14, 3, target.mesh);
         } else if (target.celestialConfig) {
-          // Select and focus on celestial body — do NOT track as "explored" for recruiter quest
+          // Select and focus on celestial body
           this.state.selectTarget(target.celestialConfig, true);
         }
       }
@@ -188,10 +206,15 @@ export class InteractionService {
     const worldPos = new THREE.Vector3();
     record.mesh.getWorldPosition(worldPos);
 
+    const isTour = this.state.isTourActive();
+    // In tour mode, frame the planet smaller with slightly higher elevation so it floats elegantly above the TourPlayer HUD
+    const camDist = isTour ? config.cameraDistance * 1.55 : config.cameraDistance;
+    const camElev = isTour ? (config.cameraElevation ?? 3) * 1.45 : (config.cameraElevation ?? 3);
+
     this.cameraService.flyTo(
       worldPos,
-      config.cameraDistance,
-      config.cameraElevation ?? 3,
+      camDist,
+      camElev,
       record.mesh
     );
   }
@@ -223,6 +246,26 @@ export class InteractionService {
       this.state.toggleSkillsRowMode();
     } else if (e.key === 'b' || e.key === 'B') {
       this.state.triggerBlackHole();
+    } else if (e.key === 'p' || e.key === 'P') {
+      if (this.state.isTourActive()) {
+        this.state.stopTour();
+      } else {
+        this.state.startTour();
+      }
+    } else if (e.key === 'h' || e.key === 'H') {
+      this.audio.toggleAmbientHum();
+    } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+      this.cameraService.rotateCamera(0.04, 0);
+    } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+      this.cameraService.rotateCamera(-0.04, 0);
+    } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+      this.cameraService.rotateCamera(0, -0.04);
+    } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+      this.cameraService.rotateCamera(0, 0.04);
+    } else if (e.key === '+' || e.key === '=') {
+      this.cameraService.zoomCamera(-6);
+    } else if (e.key === '-' || e.key === '_') {
+      this.cameraService.zoomCamera(6);
     } else if (e.key >= '1' && e.key <= '9') {
       const index = parseInt(e.key, 10) - 1;
       if (index < CELESTIAL_BODIES.length) {

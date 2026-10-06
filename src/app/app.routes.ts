@@ -10,5 +10,6 @@ export const routes: Routes = [
   { path: 'about', children: [] },
   { path: 'competitions', children: [] },
   { path: 'contact', children: [] },
+  { path: 'dossier', children: [] },
   { path: '**', redirectTo: '' }
 ];

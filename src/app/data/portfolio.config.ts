@@ -16,8 +16,8 @@ export const PORTFOLIO_CONFIG = {
   missionStatement:
     'A Business Intelligence student dedicated to transforming messy transactional records into clean, decision-ready data warehouses, predictive models, and intuitive executive dashboards. Combining analytical rigor, competitive problem-solving in C++, and hands-on robotics mentorship.',
   stats: [
-    { label: 'E-Commerce Orders Analyzed', value: '99,400+' },
-    { label: 'Quarantine Data Quality', value: '100% Zero-Loss' },
+    { label: 'E-Commerce Orders Analyzed', value: '99,441' },
+    { label: 'Warehouse Modeling', value: 'Kimball Star' },
     { label: 'TCPC National Rank', value: '32 / 100' },
     { label: 'Codeforces Challenges', value: '200+ Solved' }
   ]

@@ -15,11 +15,13 @@ import { ExperienceModalComponent } from './components/views/experience-modal/ex
 import { EducationModalComponent } from './components/views/education-modal/education-modal.component';
 import { CompetitionsModalComponent } from './components/views/competitions-modal/competitions-modal.component';
 import { ContactModalComponent } from './components/views/contact-modal/contact-modal.component';
-import { Fallback2DComponent } from './components/views/fallback-2d/fallback-2d.component';
 import { CinematicIntroComponent } from './components/cinematic-intro/cinematic-intro.component';
 import { RecruiterTrackerComponent } from './components/recruiter-tracker/recruiter-tracker.component';
 import { SkillPlanetModalComponent } from './components/views/skill-planet-modal/skill-planet-modal.component';
 import { BlackHoleContactComponent } from './components/views/black-hole-contact/black-hole-contact.component';
+import { TourPlayerComponent } from './components/tour-player/tour-player.component';
+import { RadarMiniMapComponent } from './components/radar-mini-map/radar-mini-map.component';
+import { DossierModalComponent } from './components/views/dossier-modal/dossier-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -36,11 +38,13 @@ import { BlackHoleContactComponent } from './components/views/black-hole-contact
     EducationModalComponent,
     CompetitionsModalComponent,
     ContactModalComponent,
-    Fallback2DComponent,
     CinematicIntroComponent,
     RecruiterTrackerComponent,
     SkillPlanetModalComponent,
-    BlackHoleContactComponent
+    BlackHoleContactComponent,
+    TourPlayerComponent,
+    RadarMiniMapComponent,
+    DossierModalComponent
   ],
   templateUrl: './app.html'
 })
@@ -50,7 +54,6 @@ export class App implements OnInit {
   public audio = inject(AudioService);
   private router = inject(Router);
 
-  public is2DMode = computed(() => this.state.is2DMode());
   public activeModal = computed(() => this.state.activeModal());
   public selectedTarget = computed(() => this.state.selectedTarget());
   public isMobile = computed(() => this.device.isMobile());
@@ -88,6 +91,8 @@ export class App implements OnInit {
       this.state.openModal('competitions', true);
     } else if (url === '/contact') {
       this.state.openModal('contact', true);
+    } else if (url === '/dossier') {
+      this.state.openModal('dossier', true);
     }
   }
 

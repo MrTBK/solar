@@ -55,7 +55,7 @@ import { SKILL_PLANETS, SkillPlanetItem } from '../../../data/skill.data';
               (click)="close()"
               class="flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-900/80 px-3 py-1 font-mono text-xs text-slate-300 transition-colors hover:border-slate-500 hover:text-white"
             >
-              <span>RETURN TO ROW</span>
+              <span>{{ isRowMode() ? 'RETURN TO ROW' : 'CLOSE' }}</span>
               <span class="font-bold">✕</span>
             </button>
           </div>
@@ -174,6 +174,7 @@ export class SkillPlanetModalComponent {
   private state = inject(StateService);
 
   public skillPlanet = computed(() => this.state.activeSkillPlanet());
+  public isRowMode = computed(() => this.state.isSkillsRowMode());
   public allPlanets = SKILL_PLANETS;
   public exploredCount = computed(() => this.state.exploredCount());
 

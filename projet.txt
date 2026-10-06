@@ -1,0 +1,389 @@
+================================================================================
+                    SOLAR SYSTEM PORTFOLIO — PROJECT ATLAS & BLUEPRINT
+                 Mohamed Aziz Tabakh | Data Developer & BI Specialist
+================================================================================
+
+1. PROJECT OVERVIEW
+--------------------------------------------------------------------------------
+This project is an interactive 3D Solar System Orrery and Portfolio Web Application
+built specifically to showcase the engineering identity, data systems, software
+projects, professional career milestones, and technical mastery of Mohamed Aziz Tabakh.
+
+Instead of a traditional flat web page or static CV, this portfolio transforms every
+engineering achievement into a physically simulated, interactive celestial body:
+- The central Sun embodies the developer's core identity, career summary, and ethos.
+- The 5 Project Planets represent production-grade engineering applications, each
+  orbited by autonomous satellites representing specific subsystem microservices
+  (such as dbt Core nodes, Airflow schedulers, or MLflow registries).
+- The 4 Career Stations & Belts represent professional missions, embedded hardware
+  initiatives, national competitive programming tournaments, and university degrees.
+- The 6 Skill Planets represent distinct technical domains with proficiency scores
+  and direct skill breakdowns.
+- The Black Hole Singularity represents an immersive secret event that devours the
+  universe and opens an encrypted communication transmission channel.
+
+The application achieves silky-smooth 60+ FPS rendering in WebGL, procedural Web
+Audio synthesis, cinematic guided autopilot navigation, tactical 2D radar tracking,
+and a recruiter gamification quest.
+
+
+2. HOW THE SYSTEM WORKS (TECHNICAL ARCHITECTURE & ENGINES)
+--------------------------------------------------------------------------------
+
+A. FRONTEND ARCHITECTURE (Angular 22)
+- Framework: Angular 22 with Standalone Components and Signals.
+- State Management: Centralized reactive StateService managing active selected bodies,
+  camera flight states, recruiter progress metrics, audio levels, and UI viewports.
+- Lifecycle & Memory Safety: Explicit Three.js geometry/material disposal, event
+  listener unbinding, and WebGL resource recycling on component destruction to prevent
+  GPU memory leaks.
+- Zero External Assets: High-performance design with no heavy external video or MP3
+  assets. All soundscapes are procedurally synthesized in real time.
+
+B. 3D GRAPHICS & SIMULATION ENGINE (Three.js)
+- Three.js WebGL Renderer with logarithmic depth buffers, antialiasing, and tone
+  mapping for deep space realism.
+- Shaders & Materials: Custom emissive procedural shaders for the glowing solar corona,
+  atmospheric planetary halos, planetary rings (Saturn-like dust discs), and particle
+  dust fields containing thousands of distant stellar points.
+- Orbital Mechanics & Galaxy Rotation: Every planet maintains its orbital distance and
+  axial rotation. In addition, the entire planetary system rotates around the galactic
+  core in unison to preserve clean visual alignments.
+
+C. CAMERA TRACKING & ORBITCONTROLS DELTA-SYNC ENGINE
+- Customized OrbitControls target synchronization: Solves the classic Three.js camera
+  locking bug where OrbitControls fights against moving planetary meshes.
+- In every render tick, CameraService calculates the position delta of the targeted
+  celestial body and translates both the camera and controls.target by that exact vector.
+  This allows the user to freely zoom out, rotate, pan, and inspect from any angle while
+  remaining anchored to the moving planet.
+- Navigation Ranges:
+  * Minimum Zoom Distance: 2.0 AU (close-up surface inspection)
+  * Maximum Zoom Distance: 1500.0 AU (macro-cosmic solar system overview)
+  * Camera Far Frustum: 3500.0 AU (prevents any visual clipping of outer belts)
+
+D. TRI-SECTOR RADIAL CORRIDOR LAYOUT
+To make finding projects, work experiences, and skills intuitive, the planets are
+arranged in three radial corridors separated by 120 degrees:
+
+  1. PROJECTS CORRIDOR (Heading: -30 degrees):
+     All 5 major software and data engineering projects aligned outward in a line:
+     DataForge (20 AU) -> Customer360 (34 AU) -> SupplyChainIQ (48 AU) ->
+     ChurnLab (62 AU) -> Masroufi (76 AU).
+
+  2. WORK & CAREER CORRIDOR (Heading: +90 degrees):
+     All professional and educational milestones aligned in a line:
+     Coficab Mission (26 AU) -> Robotics System (44 AU) ->
+     Algorithmic Ring (64 AU) -> Academia Orbital (84 AU).
+
+  3. SKILLS CORRIDOR (Heading: +210 degrees):
+     All 6 skill planets aligned in a line:
+     Python & Data (22 AU) -> BI & DWH (34 AU) -> C++ & Algorithms (46 AU) ->
+     Full-Stack (58 AU) -> Robotics & IoT (70 AU) -> Mobile & Offline (82 AU).
+
+Because all planets in a corridor share synchronized orbital angular speeds, they remain
+aligned directly behind each other as the galaxy rotates.
+
+E. DUAL-MODE SKILL VISUALIZATION
+The Skills sector features a dedicated toggle in the navigation HUD:
+- 🪐 ALIGN ROW MODE: Moves the 6 skill planets out of orbit into a linear horizontal
+  museum line along the X-axis (from X = -50 to X = +50), allowing side-by-side
+  comparison of technical competencies.
+- 🌌 3D ORBIT MODE: Returns the skill planets into their natural 210-degree radial
+  corridor within the solar system.
+
+F. GUIDED CINEMATIC AUTOPILOT TOUR
+- An automated 16-stop cinematic journey flying seamlessly between every planet,
+  satellite, industrial station, and academic outpost.
+- Dynamic Scale Dampening: During tour flybys, planets are automatically scaled down
+  to 0.55x (and the Sun to 0.65x) with elevated camera offsets. This prevents giant
+  spheres from obstructing the camera viewport or covering data HUD telemetry.
+- Voice & Narration: Integrates speech synthesis with real-time text narration, stop
+  progress bars, speed multipliers (1x, 1.5x, 2x), and instant pause/resume controls.
+
+G. TACTICAL 2D RADAR MINIMAP (ORRERY HUD)
+- Located at the bottom-right corner of the screen.
+- Renders an interactive polar radar display with real-time blips for every celestial
+  body, color-coded by category (Emerald for Projects, Cyan for Work, Gold for Skills).
+- Displays radial corridor guide rays and the camera's viewing frustum orientation.
+- Clicking any blip on the radar immediately commands the camera to fly to that body.
+
+H. PROCEDURAL WEB AUDIO SYNTHESIZER
+- 100% code-synthesized audio via the Web Audio API without relying on external MP3s.
+- Features:
+  * Cosmic Ambient Drone: Low-frequency twin sine oscillators with gentle resonant
+    filtering creating an authentic deep-space atmosphere.
+  * Thruster Whoosh: Filtered pink noise bursts on camera warp acceleration.
+  * UI Telemetry Beeps: High-frequency chime pings on buttons and modal interactions.
+  * Gravitational Singularity Siren: Descending frequency sweeps during black hole
+    vortex transitions.
+
+I. RECRUITER QUEST SCANNER
+- Gamified engagement system tracking recruiter exploration across 3 core sectors.
+- Evaluates visited projects, inspects technical skills, and unlocks achievements:
+  * "Architectural Explorer" (Visited all data engineering systems)
+  * "Algorithmic Master" (Inspected competitive programming accolades)
+  * "Singularity Pioneer" (Discovered the secret Black Hole)
+- Provides quick-action buttons to download CV or initiate contact once milestones
+  are reached.
+
+
+3. WHAT IS INSIDE EVERY CELESTIAL BODY
+--------------------------------------------------------------------------------
+
+================================================================================
+[THE SYSTEM CORE] THE SUN — MOHAMED AZIZ TABAKH
+================================================================================
+* Celestial ID: sun-aziz
+* Type: G-Type Star / System Core
+* Radius: 7.0 AU | Orbit: 0 AU (Center)
+* Visuals: Pulsing emissive solar corona, high-heat solar surface shaders, particle wind.
+* What is Inside:
+  - Personal Identity: Mohamed Aziz Tabakh (Data Developer & BI Specialist).
+  - Background: Student in Business Intelligence at ESEN Manouba, passionate about
+    high-throughput ETL pipelines, Kimball dimensional modeling, algorithms, and
+    embedded systems.
+  - Core Competencies: High-velocity data processing, SQL Server/PostgreSQL architecture,
+    C++ competitive programming, autonomous robotics mentoring.
+  - Direct Actions: One-click CV download, direct email transmission, LinkedIn profile,
+    and phone/WhatsApp hotline.
+
+
+================================================================================
+[SECTOR 1: PROJECTS CORRIDOR] (-30° RADIAL SPOKE)
+================================================================================
+
+1. DATAFORGE (planet-dataforge)
+* Radius: 2.2 AU | Orbit Distance: 20 AU | Color: Amber Orange (#d97706)
+* Subtitle: Production Data Engineering Platform
+* Domain: Enterprise ETL & Automated Data Quality
+* Technologies: Python, PostgreSQL, dbt Core, Apache Airflow, Docker, SQL, Bash
+* What is Inside:
+  - Architecture: Solves enterprise data corruption by ingesting raw transactional
+    records, applying validation assertions, routing corrupted rows to an isolated
+    quarantine zone, and transforming clean data via dbt into a Kimball star schema.
+  - Metrics: Automated schema checks, Kimball Star Schema, Isolated error staging.
+  - Orbiting Satellites:
+    * sat-dbt (dbt Core Node, r=0.35 AU): Models dimensional fact and dimension tables.
+    * sat-airflow (Airflow DAG Daemon, r=0.30 AU): Orchestrates automated batch schedules.
+
+2. CUSTOMER360 (planet-customer360)
+* Radius: 2.5 AU | Orbit Distance: 34 AU | Color: Cyan Blue (#0284c7)
+* Subtitle: Customer Intelligence & Cohort Analytics
+* Domain: Full-Spectrum E-Commerce Behavioral Intelligence
+* Technologies: SQL, Python, Power BI, PostgreSQL, Pandas, Dimensional DWH
+* What is Inside:
+  - Architecture: Comprehensive analytical data warehouse built on the Brazilian Olist
+    e-commerce ecosystem (95,560 customers and 99,441 transactional orders).
+  - Analytics Engine: Automated RFM (Recency, Frequency, Monetary) clustering, monthly
+    cohort retention decay analysis, and customer lifetime value (CLV) projections.
+  - Power BI Reporting: Executive decision-support dashboards featuring DAX metrics.
+  - Orbiting Satellites:
+    * sat-powerbi (Power BI Telemetry, r=0.40 AU): Live analytical reporting feed.
+    * sat-rfm (RFM Cluster Node, r=0.28 AU): Behavioral segmentation classifier.
+
+3. SUPPLYCHAINIQ (planet-supplychainiq)
+* Radius: 2.4 AU | Orbit Distance: 48 AU | Color: Emerald Green (#059669)
+* Subtitle: Logistics Analytics & Demand Forecasting
+* Domain: Logistics Optimization & Predictive Operations
+* Technologies: Python, PostgreSQL, Scikit-Learn, SQL, ETL, Pandas, Streamlit
+* What is Inside:
+  - Architecture: Decision-support logistics platform bridging physical inventory
+    movements with quantitative intelligence.
+  - Machine Learning: Predictive delay classifier forecasting late deliveries based
+    on route origin, shipping mode, and historical transit telemetry.
+  - Operations Research: Dynamic Safety Stock calculations and Economic Order
+    Quantity (EOQ) optimization preventing warehouse stockouts.
+  - Orbiting Satellites:
+    * sat-inventory (Safety Stock Sentinel, r=0.30 AU): Dynamic reorder calculation.
+    * sat-logistics (Delay Prediction Relay, r=0.35 AU): Machine learning transit scoring.
+
+4. CHURNLAB (planet-churnlab)
+* Radius: 2.3 AU | Orbit Distance: 62 AU | Color: Electric Purple (#7c3aed)
+* Subtitle: Predictive MLOps & Real-Time Inference
+* Domain: Machine Learning Operations & Model Lifecycle
+* Technologies: Python, FastAPI, PostgreSQL, Scikit-Learn, MLflow, Angular, Docker
+* What is Inside:
+  - Architecture: Full-lifecycle MLOps platform featuring automated data preprocessing,
+    hyperparameter tuning, model versioning, and low-latency inference.
+  - Performance Metrics: Stratified cross-validation, MLflow experiment tracking.
+  - Registry & Serving: MLflow artifact tracking connected to an asynchronous FastAPI
+    REST microservice with an Angular monitoring frontend.
+  - Orbiting Satellites:
+    * sat-mlflow (MLflow Registry Node, r=0.35 AU): Model artifact lineage & versioning.
+    * sat-fastapi (FastAPI Microservice, r=0.30 AU): Asynchronous REST API endpoint.
+
+5. MASROUFI - مصروفي (planet-masroufi)
+* Radius: 1.8 AU | Orbit Distance: 76 AU | Color: Teal (#0d9488)
+* Subtitle: Private Offline-First Personal Finance App
+* Domain: Mobile Application & Local SQLite Storage
+* Technologies: Flutter, Dart, SQLite, Local Storage, Multilingual RTL/LTR
+* What is Inside:
+  - Architecture: Privacy-first personal budgeting application operating 100% offline
+    with zero cloud dependencies or remote tracking.
+  - Localization: Native Arabic Right-to-Left (RTL) interface alongside English and
+    French layouts.
+  - Financial Engine: Instant expense logging, category budgets, monthly savings ratios,
+    and local SQLite persistence.
+  - Orbiting Satellite:
+    * sat-sqlite (Local SQLite Cipher, r=0.28 AU): Zero-cloud local database daemon.
+
+
+================================================================================
+[SECTOR 2: WORK & CAREER CORRIDOR] (+90° RADIAL SPOKE)
+================================================================================
+
+1. COFICAB MISSION (station-coficab)
+* Type: Industrial Orbital Station | Radius: 1.6 AU | Orbit Distance: 26 AU
+* Color: Cobolt Blue (#3b82f6)
+* Subtitle: Enterprise BI Platform & AI Assistant
+* Role: Summer Intern — Business Intelligence & AI (August 2026)
+* Company: COFICAB Group (Tunisia)
+* What is Inside:
+  - Enterprise Mission: Engineered an industrial BI platform for automotive cable
+    manufacturing data processing, validation, and analytics.
+  - Automated ETL: Ingested heterogeneous Excel spreadsheets into Microsoft SQL Server
+    using Python and SSIS, eliminating manual data entry.
+  - Data Quarantine Zone: Isolated corrupt records to guarantee clean production marts.
+  - Full-Stack & AI: Built an Angular + Flask administrative console with an embedded
+    AI natural-language query assistant allowing executives to ask plain-text questions
+    about plant metrics.
+
+2. ROBOTICS SYSTEM (planet-robotics)
+* Type: Embedded Planetary System | Radius: 2.1 AU | Orbit Distance: 44 AU
+* Color: Amber Bronze (#ea580c)
+* Subtitle: Embedded Hardware & Youth Robotics Mentorship
+* Role: Robotics Trainer & Embedded Mentor @ Youth Yes We Care Association (June 2024 – Present)
+* Technologies: Arduino Uno/Mega, ESP8266, C++, C, PWM, Bluetooth HC-05, L298N
+* What is Inside:
+  - Mentorship: Instructs youth students in electronics, sensor integration, and
+    embedded C++ logic; coaches regional competitive robotics hackathon teams.
+  - Orbiting Robotic Moons:
+    * moon-mecanum (Mecanum Omnidirectional Robot, r=0.45 AU): 4WD holonomic vehicle
+      supporting 360-degree vector motion.
+    * moon-obstacle (Autonomous Obstacle Car, r=0.40 AU): Ultrasonic sensor-guided
+      vehicle with real-time path deviation algorithms.
+    * moon-bt (Bluetooth Tele-Op, r=0.35 AU): Mobile smartphone-controlled robotic car.
+
+3. ALGORITHMIC RING (belt-competitive)
+* Type: Dense Asteroid Ring | Radius: 1.2 AU (Average) | Orbit Distance: 64 AU
+* Visuals: 450 procedural rotating rocky asteroids with 4 major glowing beacon nodes.
+* Domain: Competitive Programming, Problem Solving & Hackathons
+* What is Inside:
+  - Beacon 1: TCPC National Finalist (March 2026)
+    * Ranked 32 out of 100 university teams in the Tunisian Collegiate Programming
+      Contest (official ACPC / ICPC World Finals national qualifier).
+  - Beacon 2: Monopoly Hackathon Champion 🏆 (May 2026)
+    * 1st Place Winner among all university teams at the TBS Innovation Hackathon.
+  - Beacon 3: Codeforces Specialist
+    * Specialist rank with over 200 competitive algorithmic challenges solved in C++.
+  - Beacon 4: Bee Battle Lead Problem Setter & Head of Problem Solving
+    * Head of Problem Solving Department at ESEN HiVE Club (2025–2026); author of
+      competitive tournament problem sets and test suite boundary checkers.
+
+4. ACADEMIA ORBITAL (station-education)
+* Type: Orbital Academic Research Station | Radius: 1.7 AU | Orbit Distance: 84 AU
+* Color: Deep Indigo (#6366f1)
+* Subtitle: ESEN Business Intelligence & Lycée M.A. Chammari
+* What is Inside:
+  - Degree: Licence en Informatique de Gestion (Specialization: Business Intelligence)
+    * Institution: École Supérieure d’Économie Numérique (ESEN Manouba, 2024–Present).
+    * Focus: Data Warehousing, Kimball Modeling, SQL Optimization, Applied Analytics.
+  - High School: Baccalauréat en Sciences de l’Informatique (2024)
+    * Institution: Lycée Mohamed Arbi Chammari (Tunisia). Strong fundamentals in algorithms, logic, and mathematics.
+  - Certification: IBM SkillsBuild Data Fundamentals (2024).
+
+
+================================================================================
+[SECTOR 3: SKILLS CORRIDOR] (+210° RADIAL SPOKE)
+================================================================================
+(Also viewable in "🪐 ALIGN ROW" Mode along the horizontal X-Axis)
+
+1. PYTHON & DATA PIPELINES (skill-python)
+* Orbit: 22 AU | Row X: -50 | Radius: 3.2 AU | Color: Sky Blue (#38bdf8)
+* Skills: Python (Advanced), dbt Core (Proficient), Apache Airflow (Proficient),
+  PostgreSQL (Advanced).
+* Focus: Automated ETL pipelines, dbt transformations, and quarantine assertions.
+
+2. BUSINESS INTELLIGENCE & DWH (skill-bi)
+* Orbit: 34 AU | Row X: -30 | Radius: 3.5 AU | Color: Warm Gold (#fbbf24)
+* Skills: Power BI (Advanced, DAX), Kimball Star Schemas (Advanced), SQL Server (Advanced),
+  SSIS (Proficient), Data Quality Quarantine (Advanced).
+* Focus: Enterprise decision support, dimensional marts, and executive dashboards.
+
+3. C++ & ALGORITHMIC SOLVING (skill-algorithms)
+* Orbit: 46 AU | Row X: -10 | Radius: 3.0 AU | Color: Violet (#a855f7)
+* Skills: C++ STL (Advanced), Codeforces Specialist (200+ solved), ICPC/TCPC Finalist,
+  Graph Theory & Dynamic Programming.
+* Focus: High-speed O(N log N) algorithmic optimization and tournament problem decomposition.
+
+4. FULL-STACK & CLOUD SYSTEMS (skill-web)
+* Orbit: 58 AU | Row X: +10 | Radius: 3.1 AU | Color: Emerald (#34d399)
+* Skills: Angular 22 (Advanced), FastAPI (Proficient), Flask (Proficient), Docker (Proficient).
+* Focus: Reactive frontend architectures, asynchronous REST APIs, and containerized networks.
+
+5. ROBOTICS & EMBEDDED IoT (skill-robotics)
+* Orbit: 70 AU | Row X: +30 | Radius: 2.9 AU | Color: Bright Orange (#f97316)
+* Skills: Arduino Uno/Mega (Advanced), ESP8266 Wi-Fi (Proficient), H-Bridges & Circuits,
+  Youth Robotics Mentorship.
+* Focus: Embedded microcontrollers, autonomous sensor loops, and hands-on teaching.
+
+6. MOBILE & OFFLINE ARCHITECTURE (skill-mobile)
+* Orbit: 82 AU | Row X: +50 | Radius: 2.7 AU | Color: Teal Aqua (#2dd4bf)
+* Skills: Flutter & Dart (Proficient), Local SQLite (Proficient), Multilingual RTL/LTR.
+* Focus: 100% offline persistence, privacy-first mobile apps, and Arabic language localization.
+
+
+================================================================================
+[SECRET EVENT] BLACK HOLE SINGULARITY (black-hole-contact)
+================================================================================
+* Trigger: Discovering all 6 skill planets OR pressing the 'B' key on your keyboard.
+* Visual Mechanics:
+  - Spacetime collapses into a swirling gravitational vortex with an accretion disk.
+  - All orbiting planets and moons are drawn gravitationally toward the event horizon.
+  - Procedural gravitational synth sirens play through the Web Audio synthesizer.
+* What is Inside:
+  - The Singularity opens an encrypted holographic transmission window (Contact Terminal):
+    * Direct Email: mohamedaziz.tabakh@esen.tn
+    * LinkedIn: https://www.linkedin.com/in/mohamed-aziz-tabakh-7b4674234
+    * GitHub: https://github.com/MrTBK
+    * Phone / WhatsApp: +216 56 597 139
+    * Download CV: Mohamed_Aziz_Tabakh_CV.pdf
+  - "TRIGGER BIG BANG" Reset Button: Restores spacetime, expanding the planets back
+    to their original pristine orbits.
+
+
+4. USER CONTROLS, SHORTCUTS & INTERACTION
+--------------------------------------------------------------------------------
+
+A. MOUSE / TOUCH NAVIGATION:
+- Left-Click + Drag: Freely rotate and orbit camera around the active celestial target.
+- Scroll Wheel / Pinch: Zoom camera in and out (2.0 AU to 1500.0 AU).
+- Right-Click + Drag: Pan the camera across the cosmic plane.
+- Left-Click on Planet: Camera flies smoothly and locks onto the selected body.
+- Double-Click: Opens detailed project or skill dossier modal.
+
+B. KEYBOARD SHORTCUTS:
+- [SPACE] : Start / Pause Cinematic Guided Tour Mode.
+- [ESC]   : Reset camera to overview / Close open dossier modals.
+- [M]     : Toggle Web Audio Synthesizer (Mute / Unmute).
+- [B]     : Trigger secret Black Hole Singularity event.
+- [S]     : Pivot camera directly to Skills Sector (210°).
+- [P]     : Pivot camera directly to Projects Sector (-30°).
+- [W]     : Pivot camera directly to Work & Career Sector (+90°).
+- [1 - 5] : Instantly jump to Project Planet 1 through 5.
+
+C. RADAR HUD & RECRUITER TRACKER:
+- Bottom-Right Radar: Displays real-time polar blips and sector guide rays.
+- Recruiter Progress Bar: Tracks discovered systems and unlocks direct hiring shortcuts.
+
+
+5. PRODUCTION & PERFORMANCE SPECIFICATIONS
+--------------------------------------------------------------------------------
+- Target Frame Rate: Constant 60+ FPS across modern desktop and mobile browsers.
+- Test Suite: 100% Passing Unit & Integration Tests (Angular Jasmine / Karma).
+- Optimization: Font inlining disabled for flawless offline and containerized builds.
+- Device Adaptability: Integrated 2D Fallback view for low-power mobile devices or
+  browsers without WebGL hardware acceleration.
+- Creator & Maintainer: Mohamed Aziz Tabakh (https://github.com/MrTBK).
+================================================================================

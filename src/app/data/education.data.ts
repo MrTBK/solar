@@ -37,7 +37,7 @@ export const EDUCATION_DATA: EducationItem[] = [
     period: '2024',
     field: 'Spécialité : Sciences de l’Informatique',
     description:
-      'National high school diploma in computer science with distinction, establishing strong fundamentals in algorithms, logic, discrete mathematics, and database principles.',
+      'National high school diploma in computer science, establishing strong fundamentals in algorithms, logic, discrete mathematics, and database principles.',
     keyTopics: [
       'Algorithmic Logic & Python / Pascal Programming',
       'Relational Database Modeling & SQL',

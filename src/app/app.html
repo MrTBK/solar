@@ -8,17 +8,11 @@
   <!-- Mission Control Drawer -->
   <app-mission-control />
 
-  <!-- Main Viewport: 3D Three.js Universe OR 2D Fallback -->
-  @if (is2DMode()) {
-    <div class="h-full w-full overflow-y-auto">
-      <app-fallback-2d />
-    </div>
-  } @else {
-    <app-canvas-scene />
-  }
+  <!-- Main Viewport: 3D Three.js Universe -->
+  <app-canvas-scene />
 
-  <!-- Bottom Navigation HUD Controls (Only in 3D Mode when no full modal is active) -->
-  @if (!is2DMode() && !activeModal()) {
+  <!-- Bottom Navigation HUD Controls (When no full modal is active) -->
+  @if (!activeModal()) {
     <div
       class="pointer-events-none fixed right-0 bottom-4 left-0 z-30 flex items-center justify-between px-4 sm:px-6"
     >
@@ -27,11 +21,13 @@
         class="hidden items-center gap-2 rounded-xl border border-slate-800/80 bg-slate-950/70 px-3.5 py-1.5 font-mono text-[11px] text-slate-400 shadow-xl backdrop-blur-md md:flex"
       >
         <span class="text-cyan-400">NAVIGATION:</span>
-        <span>Left-Click Drag: Rotate</span>
+        <span>Drag: Rotate</span>
         <span>·</span>
-        <span>Scroll: Zoom</span>
+        <span>Scroll / +/-: Zoom</span>
         <span>·</span>
-        <span>Click Object: Inspect</span>
+        <span>WASD: Orbit</span>
+        <span>·</span>
+        <span>P: Tour</span>
       </div>
 
       <!-- Selected target intercept button / return to system -->
@@ -50,11 +46,19 @@
   }
 
   <!-- Recruiter Quest Tracker HUD -->
-  @if (!is2DMode()) {
-    <app-recruiter-tracker />
-  }
+  <app-recruiter-tracker />
+
+  <!-- Tactical 2D Radar Mini-Map -->
+  <app-radar-mini-map />
+
+  <!-- Autopilot Tour Player HUD -->
+  <app-tour-player />
 
   <!-- Modals & Views -->
+  @if (activeModal() === 'dossier') {
+    <app-dossier-modal />
+  }
+
   @if (activeModal() === 'project') {
     <app-project-modal />
   }

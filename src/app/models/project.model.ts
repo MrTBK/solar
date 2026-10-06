@@ -3,6 +3,14 @@ export interface ProjectMetric {
   value: string;
 }
 
+export interface ArchitectureStep {
+  step: string;
+  title: string;
+  detail: string;
+  tech?: string;
+  badge?: 'source' | 'process' | 'validation' | 'storage' | 'serving' | 'analytics' | 'hardware';
+}
+
 export interface ProjectData {
   id: string;
   slug: string;
@@ -12,6 +20,11 @@ export interface ProjectData {
   tagline: string;
   description: string;
   longDescription: string;
+  problemSolved: string;
+  engineeringDecisions: string[];
+  measurableResults: string[];
+  implementedFeatures: string[];
+  plannedFeatures?: string[];
   technologies: string[];
   status: 'Production' | 'Active' | 'Open Source' | 'Completed' | 'Enterprise';
   github?: string;
@@ -21,5 +34,7 @@ export interface ProjectData {
   highlights: string[];
   features?: string[];
   architecture?: string[];
+  architectureSteps: ArchitectureStep[];
   celestialId: string;
 }
+

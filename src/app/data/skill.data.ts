@@ -105,7 +105,7 @@ export const SKILL_PLANETS: SkillPlanetItem[] = [
     emissiveColor: '#0284c7',
     textureType: 'industrial',
     radius: 3.2,
-    rowX: -50,
+    rowX: 16,
     highlight: 'ETL Pipelines, dbt transformations, PostgreSQL staging, and Airflow orchestration.',
     skills: [
       { name: 'Python', level: 'Advanced', detail: 'Pandas, NumPy, Scikit-Learn, Pygame' },
@@ -123,7 +123,7 @@ export const SKILL_PLANETS: SkillPlanetItem[] = [
     emissiveColor: '#d97706',
     textureType: 'analytics',
     radius: 3.5,
-    rowX: -30,
+    rowX: 32,
     highlight: 'Enterprise dimensional modeling, DAX performance measures, and multi-source ETL reconciliation.',
     skills: [
       { name: 'Power BI', level: 'Advanced', detail: 'DAX measures, interactive executive reports' },
@@ -141,7 +141,7 @@ export const SKILL_PLANETS: SkillPlanetItem[] = [
     emissiveColor: '#7e22ce',
     textureType: 'mlops',
     radius: 3.0,
-    rowX: -10,
+    rowX: 48,
     highlight: 'High-speed algorithmic analysis, complex data structures, and ICPC tournament problem decomposition in C++.',
     skills: [
       { name: 'C++ (STL)', level: 'Advanced', detail: 'High performance O(NlogN) optimizations' },
@@ -159,7 +159,7 @@ export const SKILL_PLANETS: SkillPlanetItem[] = [
     emissiveColor: '#059669',
     textureType: 'logistics',
     radius: 3.1,
-    rowX: 10,
+    rowX: 64,
     highlight: 'Modern reactive frontend architectures, asynchronous microservices, and Docker containerization.',
     skills: [
       { name: 'Angular (v17-22+)', level: 'Advanced', detail: 'Standalone signals, Three.js integration' },
@@ -177,7 +177,7 @@ export const SKILL_PLANETS: SkillPlanetItem[] = [
     emissiveColor: '#ea580c',
     textureType: 'robotics',
     radius: 2.9,
-    rowX: 30,
+    rowX: 80,
     highlight: 'Motor controllers, ultrasonic pathfinding, Bluetooth wireless protocols, and hands-on youth engineering training.',
     skills: [
       { name: 'Arduino Hardware', level: 'Advanced', detail: 'Motor drivers, sensors, PWM control' },
@@ -195,7 +195,7 @@ export const SKILL_PLANETS: SkillPlanetItem[] = [
     emissiveColor: '#0d9488',
     textureType: 'finance',
     radius: 2.7,
-    rowX: 50,
+    rowX: 96,
     highlight: 'Zero-cloud offline-first architectures, encrypted local SQLite persistence, and multilingual Arabic/English layouts.',
     skills: [
       { name: 'Flutter & Dart', level: 'Proficient', detail: 'Cross-platform reactive UI architecture' },
@@ -203,4 +203,30 @@ export const SKILL_PLANETS: SkillPlanetItem[] = [
       { name: 'Multilingual i18n', level: 'Advanced', detail: 'Native Arabic RTL, French, English' }
     ]
   }
+];
+
+export interface TrackedPlanetItem {
+  id: string;
+  name: string;
+  shortName: string;
+  category: string;
+  color: string;
+  type: 'project' | 'skill';
+  projectId?: string;
+}
+
+export const ALL_TRACKED_PLANETS: TrackedPlanetItem[] = [
+  // 5 Project Planets
+  { id: 'planet-dataforge', name: 'DATAFORGE', shortName: 'DataForge', category: 'Data Engineering', color: '#d97706', type: 'project', projectId: 'dataforge' },
+  { id: 'planet-customer360', name: 'CUSTOMER360', shortName: 'Customer360', category: 'BI / Analytics', color: '#0284c7', type: 'project', projectId: 'customer360' },
+  { id: 'planet-supplychainiq', name: 'SUPPLYCHAINIQ', shortName: 'SupplyChain', category: 'Supply Chain', color: '#059669', type: 'project', projectId: 'supplychainiq' },
+  { id: 'planet-churnlab', name: 'CHURNLAB', shortName: 'ChurnLab', category: 'MLOps', color: '#7c3aed', type: 'project', projectId: 'churnlab' },
+  { id: 'planet-masroufi', name: 'MASROUFI', shortName: 'Masroufi', category: 'Mobile App', color: '#0d9488', type: 'project', projectId: 'masroufi' },
+  // 6 Skill Planets
+  { id: 'skill-python', name: 'PYTHON & DATA', shortName: 'Python', category: 'Data Engineering', color: '#38bdf8', type: 'skill' },
+  { id: 'skill-bi', name: 'BI & DWH', shortName: 'BI/DWH', category: 'Business Intelligence', color: '#fbbf24', type: 'skill' },
+  { id: 'skill-algorithms', name: 'C++ & ALGO', shortName: 'C++/Algo', category: 'Algorithms', color: '#a855f7', type: 'skill' },
+  { id: 'skill-web', name: 'WEB & CLOUD', shortName: 'Web/Cloud', category: 'Full-Stack', color: '#34d399', type: 'skill' },
+  { id: 'skill-robotics', name: 'ROBOTICS & HW', shortName: 'Robotics', category: 'Hardware', color: '#f97316', type: 'skill' },
+  { id: 'skill-mobile', name: 'MOBILE APPS', shortName: 'Mobile', category: 'Mobile App', color: '#2dd4bf', type: 'skill' }
 ];

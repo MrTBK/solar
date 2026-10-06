@@ -6,12 +6,23 @@ import { Injectable, signal } from '@angular/core';
 export class AudioService {
   private audioCtx: AudioContext | null = null;
   public isMuted = signal<boolean>(false);
+  public volume = signal<number>(0.75);
+  public isAmbientHumActive = signal<boolean>(false);
+
+  private ambientGain: GainNode | null = null;
+  private ambientFilter: BiquadFilterNode | null = null;
+  private ambientOsc1: OscillatorNode | null = null;
+  private ambientOsc2: OscillatorNode | null = null;
 
   constructor() {
     // Check saved audio preference
     const saved = localStorage.getItem('solar_audio_muted');
     if (saved !== null) {
       this.isMuted.set(saved === 'true');
+    }
+    const savedAmbient = localStorage.getItem('solar_ambient_hum');
+    if (savedAmbient === 'true') {
+      this.isAmbientHumActive.set(true);
     }
   }
 
@@ -29,14 +40,104 @@ export class AudioService {
     return this.audioCtx;
   }
 
+  public setVolume(val: number): void {
+    const clamped = Math.max(0, Math.min(1, val));
+    this.volume.set(clamped);
+    if (this.ambientGain && this.audioCtx) {
+      this.ambientGain.gain.setValueAtTime(0.014 * clamped, this.audioCtx.currentTime);
+    }
+  }
+
   public toggleMute(): boolean {
     const next = !this.isMuted();
     this.isMuted.set(next);
     localStorage.setItem('solar_audio_muted', String(next));
-    if (!next) {
+    if (next) {
+      this.stopAmbientHum();
+    } else {
       this.playToggle();
+      if (this.isAmbientHumActive()) {
+        this.startAmbientHum();
+      }
     }
     return next;
+  }
+
+  public toggleAmbientHum(): boolean {
+    const next = !this.isAmbientHumActive();
+    this.isAmbientHumActive.set(next);
+    localStorage.setItem('solar_ambient_hum', String(next));
+    if (next && !this.isMuted()) {
+      this.startAmbientHum();
+    } else {
+      this.stopAmbientHum();
+    }
+    return next;
+  }
+
+  public startAmbientHum(): void {
+    if (this.isMuted()) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    this.stopAmbientHum();
+
+    try {
+      const now = ctx.currentTime;
+      this.ambientFilter = ctx.createBiquadFilter();
+      this.ambientFilter.type = 'lowpass';
+      this.ambientFilter.frequency.setValueAtTime(140, now);
+      this.ambientFilter.Q.setValueAtTime(3, now);
+
+      this.ambientGain = ctx.createGain();
+      this.ambientGain.gain.setValueAtTime(0.0001, now);
+      this.ambientGain.gain.linearRampToValueAtTime(0.014 * this.volume(), now + 2.5);
+
+      this.ambientOsc1 = ctx.createOscillator();
+      this.ambientOsc1.type = 'triangle';
+      this.ambientOsc1.frequency.setValueAtTime(55, now); // A1 note
+
+      this.ambientOsc2 = ctx.createOscillator();
+      this.ambientOsc2.type = 'sine';
+      this.ambientOsc2.frequency.setValueAtTime(55.6, now); // 0.6Hz binaural drift
+
+      this.ambientOsc1.connect(this.ambientFilter);
+      this.ambientOsc2.connect(this.ambientFilter);
+      this.ambientFilter.connect(this.ambientGain);
+      this.ambientGain.connect(ctx.destination);
+
+      this.ambientOsc1.start();
+      this.ambientOsc2.start();
+    } catch {
+      // AudioContext policy suppression fallback
+    }
+  }
+
+  public stopAmbientHum(): void {
+    try {
+      if (this.ambientGain && this.audioCtx) {
+        const now = this.audioCtx.currentTime;
+        this.ambientGain.gain.linearRampToValueAtTime(0.0001, now + 0.8);
+      }
+      setTimeout(() => {
+        if (this.ambientOsc1) {
+          try { this.ambientOsc1.stop(); this.ambientOsc1.disconnect(); } catch {}
+          this.ambientOsc1 = null;
+        }
+        if (this.ambientOsc2) {
+          try { this.ambientOsc2.stop(); this.ambientOsc2.disconnect(); } catch {}
+          this.ambientOsc2 = null;
+        }
+        if (this.ambientFilter) {
+          try { this.ambientFilter.disconnect(); } catch {}
+          this.ambientFilter = null;
+        }
+        if (this.ambientGain) {
+          try { this.ambientGain.disconnect(); } catch {}
+          this.ambientGain = null;
+        }
+      }, 900);
+    } catch {}
   }
 
   public playHover(): void {
