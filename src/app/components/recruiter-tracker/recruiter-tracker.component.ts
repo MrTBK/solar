@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StateService } from '../../core/services/state.service';
+import { DeviceService } from '../../core/services/device.service';
 import { ALL_TRACKED_PLANETS, SKILL_PLANETS, TrackedPlanetItem } from '../../data/skill.data';
 
 @Component({
@@ -12,7 +13,10 @@ import { ALL_TRACKED_PLANETS, SKILL_PLANETS, TrackedPlanetItem } from '../../dat
       <div class="pointer-events-none fixed top-16 left-3 z-30 md:left-6">
         <div
           class="pointer-events-auto rounded-xl border border-cyan-500/30 bg-slate-950/90 shadow-xl backdrop-blur-xl transition-all"
-          [class.w-72]="!collapsed()"
+          [class.w-72]="!collapsed() && !isMobile()"
+          [class.w-[calc(100vw-24px)]]="!collapsed() && isMobile()"
+          [class.max-h-[75vh]]="!collapsed() && isMobile()"
+          [class.overflow-y-auto]="!collapsed() && isMobile()"
         >
           <!-- Header -->
           <div class="flex items-center justify-between gap-2 px-3 py-2.5">
@@ -147,10 +151,12 @@ import { ALL_TRACKED_PLANETS, SKILL_PLANETS, TrackedPlanetItem } from '../../dat
 })
 export class RecruiterTrackerComponent {
   private state = inject(StateService);
+  private device = inject(DeviceService);
 
   public allPlanets = ALL_TRACKED_PLANETS;
   public totalPlanets = ALL_TRACKED_PLANETS.length;
-  public collapsed = signal<boolean>(false);
+  public isMobile = computed(() => this.device.isMobile());
+  public collapsed = signal<boolean>(this.device.isMobile());
 
   public projectPlanets = computed(() => this.allPlanets.filter((p) => p.type === 'project'));
   public skillPlanets = computed(() => this.allPlanets.filter((p) => p.type === 'skill'));

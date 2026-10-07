@@ -42,24 +42,10 @@ export class CanvasSceneComponent implements AfterViewInit, OnDestroy {
   private interaction = inject(InteractionService);
   private state = inject(StateService);
 
-  // Double-tap detection for mobile
-  private lastTapTime = 0;
-  private readonly DOUBLE_TAP_MS = 300;
-
   ngAfterViewInit(): void {
     const canvas = this.canvasRef.nativeElement;
     this.solarScene.init(canvas);
     this.interaction.init(canvas);
-
-    // Touch: double-tap returns to system overview
-    canvas.addEventListener('touchend', (e: TouchEvent) => {
-      const now = Date.now();
-      if (now - this.lastTapTime < this.DOUBLE_TAP_MS && e.touches.length === 0) {
-        e.preventDefault();
-        this.state.returnToSystem();
-      }
-      this.lastTapTime = now;
-    }, { passive: false });
   }
 
   @HostListener('window:resize')

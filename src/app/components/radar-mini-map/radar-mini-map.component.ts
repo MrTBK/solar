@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StateService } from '../../core/services/state.service';
+import { DeviceService } from '../../core/services/device.service';
 import { CELESTIAL_BODIES } from '../../data/celestial.data';
 import { CelestialBodyConfig } from '../../models/celestial.model';
 import { SKILL_PLANETS, SkillPlanetItem } from '../../data/skill.data';
@@ -11,26 +12,24 @@ import { SKILL_PLANETS, SkillPlanetItem } from '../../data/skill.data';
   imports: [CommonModule],
   template: `
     @if (!is2DMode() && showRadar()) {
-      <div class="pointer-events-none fixed right-3 bottom-14 z-30 md:right-6 md:bottom-16">
+      <div class="pointer-events-none fixed right-3 bottom-16 z-30 md:right-6 md:bottom-16">
         <div
-          class="pointer-events-auto relative rounded-2xl border border-cyan-500/30 bg-slate-950/90 p-3 shadow-2xl backdrop-blur-xl transition-all"
+          class="pointer-events-auto relative rounded-2xl border border-cyan-500/30 bg-slate-950/90 shadow-2xl backdrop-blur-xl transition-all"
+          [class.p-3]="!isMinimized()"
+          [class.p-2]="isMinimized()"
           [class.w-48]="!isMinimized()"
-          [class.w-12]="isMinimized()"
+          [class.w-auto]="isMinimized()"
         >
           <!-- Radar Header -->
-          <div class="flex items-center justify-between pb-1.5 border-b border-slate-800/80">
-            @if (!isMinimized()) {
-              <div class="flex items-center gap-1.5 font-mono text-[10px] font-bold text-cyan-400 uppercase tracking-wider">
-                <span class="inline-block h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>TACTICAL RADAR</span>
-              </div>
-            }
+          <div class="flex items-center justify-between" [class.pb-1.5]="!isMinimized()" [class.border-b]="!isMinimized()" [class.border-slate-800/80]="!isMinimized()">
             <button
               (click)="toggleMinimize()"
-              class="text-slate-400 hover:text-white font-mono text-[11px] p-0.5 ml-auto"
+              class="flex items-center gap-1.5 font-mono text-[10px] font-bold text-cyan-400 uppercase tracking-wider hover:text-white transition-colors cursor-pointer select-none"
               [title]="isMinimized() ? 'Expand Tactical Radar' : 'Minimize Tactical Radar'"
             >
-              {{ isMinimized() ? '⤢' : '—' }}
+              <span class="inline-block h-1.5 w-1.5 rounded-full bg-cyan-400" [class.animate-ping]="!isMinimized()"></span>
+              <span>{{ isMinimized() ? '🛰️ RADAR' : 'TACTICAL RADAR' }}</span>
+              <span class="text-slate-400 ml-1 text-[11px]">{{ isMinimized() ? '⤢' : '—' }}</span>
             </button>
           </div>
 
@@ -167,8 +166,9 @@ import { SKILL_PLANETS, SkillPlanetItem } from '../../data/skill.data';
 })
 export class RadarMiniMapComponent {
   private state = inject(StateService);
+  private device = inject(DeviceService);
 
-  public isMinimized = signal<boolean>(false);
+  public isMinimized = signal<boolean>(this.device.isMobile());
   public bodies = CELESTIAL_BODIES;
   public skillPlanets = SKILL_PLANETS;
 

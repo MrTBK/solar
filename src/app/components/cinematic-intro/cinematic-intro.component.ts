@@ -133,7 +133,6 @@ export class CinematicIntroComponent {
 
   public enterSystem(): void {
     if (this.isFading()) return;
-    this.device.requestLandscape();
     this.isFading.set(true);
     setTimeout(() => {
       this.isDone.set(true);

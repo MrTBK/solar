@@ -7,6 +7,7 @@ import { SolarSceneService } from './solar-scene.service';
 import { CameraService } from './camera.service';
 import { StateService } from './state.service';
 import { AudioService } from './audio.service';
+import { HapticService } from './haptic.service';
 
 interface InteractiveTarget {
   mesh: THREE.Object3D;
@@ -22,6 +23,7 @@ export class InteractionService {
   private cameraService = inject(CameraService);
   private state = inject(StateService);
   private audio = inject(AudioService);
+  private haptic = inject(HapticService);
 
   private raycaster = new THREE.Raycaster();
   private mouse = new THREE.Vector2();
@@ -76,15 +78,24 @@ export class InteractionService {
 
   private onPointerUp(e: MouseEvent, canvas: HTMLCanvasElement): void {
     this.isPointerDown = false;
-    // Check if mouse moved significantly (drag/orbit vs click)
+    const isTouch = (e as PointerEvent).pointerType === 'touch' || ('ontouchstart' in window);
+    const threshold = isTouch ? 28 : 8;
     const dist = Math.hypot(e.clientX - this.pointerDownPos.x, e.clientY - this.pointerDownPos.y);
-    if (dist < 6) {
+    if (dist < threshold) {
       this.handleClick(e, canvas);
     }
   }
 
   private onPointerMove(e: MouseEvent, canvas: HTMLCanvasElement): void {
     if (this.state.isBlackHoleActive()) return;
+
+    // Do not show hover tooltips on touch drag
+    const isTouch = (e as PointerEvent).pointerType === 'touch';
+    if (isTouch) {
+      this.resetHoveredMesh();
+      this.state.setHoveredTarget(null, null);
+      return;
+    }
 
     const rect = canvas.getBoundingClientRect();
     this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -155,20 +166,51 @@ export class InteractionService {
     this.raycaster.setFromCamera(this.mouse, this.cameraService.camera);
     const intersects = this.raycaster.intersectObjects(this.solarScene.interactiveMeshes, true);
 
-    if (intersects.length > 0) {
-      const target = this.findInteractiveObject(intersects[0].object);
-      if (target) {
-        if (target.skillPlanetConfig) {
-          this.state.openSkillPlanet(target.skillPlanetConfig);
+    let chosenTarget: InteractiveTarget | null = null;
 
-          // Fly camera to skill planet
-          const worldPos = new THREE.Vector3();
-          target.mesh.getWorldPosition(worldPos);
-          this.cameraService.flyTo(worldPos, 14, 3, target.mesh);
-        } else if (target.celestialConfig) {
-          // Select and focus on celestial body
-          this.state.selectTarget(target.celestialConfig, true);
+    if (intersects.length > 0) {
+      chosenTarget = this.findInteractiveObject(intersects[0].object);
+    } else {
+      // Touch Proximity Fallback: find closest planet within 48px radius for effortless mobile taps
+      const tapX = e.clientX - rect.left;
+      const tapY = e.clientY - rect.top;
+      let minDistance = 48;
+      const tempVec = new THREE.Vector3();
+
+      for (const mesh of this.solarScene.interactiveMeshes) {
+        mesh.getWorldPosition(tempVec);
+        tempVec.project(this.cameraService.camera);
+        // Only objects in front of camera
+        if (tempVec.z < 1) {
+          const projX = ((tempVec.x + 1) * rect.width) / 2;
+          const projY = ((-tempVec.y + 1) * rect.height) / 2;
+          const d = Math.hypot(projX - tapX, projY - tapY);
+          if (d < minDistance) {
+            minDistance = d;
+            chosenTarget = this.findInteractiveObject(mesh);
+          }
         }
+      }
+    }
+
+    if (chosenTarget) {
+      this.haptic.medium();
+      if (chosenTarget.skillPlanetConfig) {
+        this.state.openSkillPlanet(chosenTarget.skillPlanetConfig);
+
+        // Fly camera to skill planet
+        const worldPos = new THREE.Vector3();
+        chosenTarget.mesh.getWorldPosition(worldPos);
+        this.cameraService.flyTo(worldPos, 14, 3, chosenTarget.mesh);
+      } else if (chosenTarget.celestialConfig) {
+        // Select and focus on celestial body
+        this.state.selectTarget(chosenTarget.celestialConfig, true);
+      }
+    } else {
+      // Tap on empty space: smoothly return to system overview if focused on a planet
+      if (this.state.selectedTarget() || this.state.activeSkillPlanet()) {
+        this.haptic.light();
+        this.state.returnToSystem();
       }
     }
   }

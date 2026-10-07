@@ -10,7 +10,7 @@ import { StateService } from '../../core/services/state.service';
     @if (target(); as body) {
       @if (pos(); as p) {
         <div
-          class="pointer-events-none fixed z-30 transition-all duration-75"
+          class="pointer-events-none fixed z-30 transition-all duration-75 hidden md:block"
           [style.left.px]="clampedX(p.x)"
           [style.top.px]="p.y"
           [style.transform]="getTransform(p.x)"
