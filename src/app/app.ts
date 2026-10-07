@@ -23,6 +23,10 @@ import { TourPlayerComponent } from './components/tour-player/tour-player.compon
 import { RadarMiniMapComponent } from './components/radar-mini-map/radar-mini-map.component';
 import { DossierModalComponent } from './components/views/dossier-modal/dossier-modal.component';
 import { RotatePromptComponent } from './components/rotate-prompt/rotate-prompt.component';
+import { PilotHudComponent } from './components/pilot-hud/pilot-hud.component';
+import { SciFiTerminalComponent } from './components/sci-fi-terminal/sci-fi-terminal.component';
+import { OrreryControlsComponent } from './components/orrery-controls/orrery-controls.component';
+import { MissionDossierExportComponent } from './components/mission-dossier-export/mission-dossier-export.component';
 
 @Component({
   selector: 'app-root',
@@ -46,7 +50,11 @@ import { RotatePromptComponent } from './components/rotate-prompt/rotate-prompt.
     TourPlayerComponent,
     RadarMiniMapComponent,
     DossierModalComponent,
-    RotatePromptComponent
+    RotatePromptComponent,
+    PilotHudComponent,
+    SciFiTerminalComponent,
+    OrreryControlsComponent,
+    MissionDossierExportComponent
   ],
   templateUrl: './app.html'
 })

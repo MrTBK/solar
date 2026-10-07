@@ -29,6 +29,16 @@ export class CameraService {
   public trackingObject: THREE.Object3D | null = null;
   private lastTrackedPos = new THREE.Vector3();
 
+  // Pilot Probe Flight Mode state
+  public isFlightModeActive = false;
+  private flightSpeed = 0;
+  private flightForwardInput = 0;
+  private flightYawInput = 0;
+  private flightPitchInput = 0;
+  private flightRollInput = 0;
+  private flightBoost = false;
+  private flightEuler = new THREE.Euler(0, 0, 0, 'YXZ');
+
   public init(canvas: HTMLCanvasElement): void {
     const aspect = canvas.clientWidth / canvas.clientHeight;
     this.camera = new THREE.PerspectiveCamera(45, aspect, 0.5, 3500);
@@ -113,8 +123,69 @@ export class CameraService {
     this.destPos.copy(this.defaultPos);
   }
 
+  public isTransitioningActive(): boolean {
+    return this.isTransitioning;
+  }
+
+  public setFlightMode(active: boolean): void {
+    this.isFlightModeActive = active;
+    if (this.controls) {
+      this.controls.enabled = !active;
+    }
+    if (active) {
+      this.trackingObject = null;
+      this.isTransitioning = false;
+      this.flightSpeed = 0;
+      if (this.camera) {
+        this.flightEuler.setFromQuaternion(this.camera.quaternion, 'YXZ');
+      }
+    } else {
+      // Re-align controls target ahead of camera
+      if (this.camera && this.controls) {
+        const dir = new THREE.Vector3();
+        this.camera.getWorldDirection(dir);
+        this.controls.target.copy(this.camera.position).add(dir.multiplyScalar(40));
+        this.controls.update();
+      }
+    }
+  }
+
+  public setFlightInputs(forward: number, yaw: number, pitch: number, roll: number, boost: boolean): void {
+    this.flightForwardInput = forward;
+    this.flightYawInput = yaw;
+    this.flightPitchInput = pitch;
+    this.flightRollInput = roll;
+    this.flightBoost = boost;
+  }
+
+  public getFlightSpeed(): number {
+    return this.flightSpeed;
+  }
+
   public update(delta: number): void {
     if (!this.camera || !this.controls) return;
+
+    // --- PILOT PROBE FLIGHT MODE LOOP ---
+    if (this.isFlightModeActive) {
+      const turnSpeed = 1.6;
+      this.flightEuler.y -= this.flightYawInput * turnSpeed * delta;
+      this.flightEuler.x += this.flightPitchInput * turnSpeed * delta;
+      this.flightEuler.z -= this.flightRollInput * turnSpeed * delta;
+
+      // Limit pitch to prevent gimbal flip
+      this.flightEuler.x = Math.max(-Math.PI / 2 + 0.05, Math.min(Math.PI / 2 - 0.05, this.flightEuler.x));
+      this.camera.quaternion.setFromEuler(this.flightEuler);
+
+      const targetSpeed = this.flightForwardInput * (this.flightBoost ? 95 : 35);
+      this.flightSpeed += (targetSpeed - this.flightSpeed) * Math.min(1, delta * 3.5);
+
+      const forwardVec = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
+      this.camera.position.addScaledVector(forwardVec, this.flightSpeed * delta);
+
+      // Keep target slightly ahead for seamless transition back
+      this.controls.target.copy(this.camera.position).addScaledVector(forwardVec, 30);
+      return;
+    }
 
     if (this.isTransitioning) {
       this.transitionProgress += delta / this.transitionDuration;

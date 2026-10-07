@@ -93,6 +93,28 @@ export class SolarSceneService {
   private cometStart = new THREE.Vector3();
   private cometEnd = new THREE.Vector3();
 
+  // Upgrades: Hyper-Warp Particle Streaks
+  private warpStreaks: {
+    group: THREE.Group;
+    lines: THREE.LineSegments;
+    material: THREE.LineBasicMaterial;
+    positions: Float32Array;
+    geometry: THREE.BufferGeometry;
+    currentOpacity: number;
+    speeds: Float32Array;
+  } | null = null;
+
+  // Upgrades: Skill Constellation Tech-Tree
+  private constellationGroup = new THREE.Group();
+  private constellationLines: {
+    line: THREE.Line;
+    geo: THREE.BufferGeometry;
+    fromId: string;
+    toId: string;
+    fromIsSkill: boolean;
+    toIsSkill: boolean;
+  }[] = [];
+
   constructor() {
     // React to row mode changes
     effect(() => {
@@ -113,6 +135,12 @@ export class SolarSceneService {
     effect(() => {
       const q = this.state.qualityLevel();
       this.applyQualityLevel(q);
+    });
+
+    // React to flight mode changes
+    effect(() => {
+      const isFlight = this.state.isFlightMode();
+      this.cameraService.setFlightMode(isFlight);
     });
   }
 
@@ -152,7 +180,11 @@ export class SolarSceneService {
     this.buildSkillPlanetsRow();
     this.buildBlackHole();
 
-    // 6. Start Animation Loop
+    // 6. Upgrades: Hyper-Warp Streaks & Constellation Matrix
+    this.setupWarpStreaks();
+    this.setupConstellations();
+
+    // 7. Start Animation Loop
     this.startLoop();
   }
 
@@ -461,6 +493,109 @@ export class SolarSceneService {
     this.blackHole = this.factory.createBlackHoleGroup();
     this.blackHole.group.position.set(0, 0, 0);
     this.scene.add(this.blackHole.group);
+  }
+
+  // --- HYPER-WARP STREAKS PARTICLES ---
+
+  private setupWarpStreaks(): void {
+    const streakCount = 280;
+    const positions = new Float32Array(streakCount * 6);
+    const speeds = new Float32Array(streakCount);
+
+    for (let i = 0; i < streakCount; i++) {
+      const idx = i * 6;
+      const x = (Math.random() - 0.5) * 120;
+      const y = (Math.random() - 0.5) * 100;
+      const z = -Math.random() * 260 - 20;
+      const len = 12 + Math.random() * 20;
+
+      positions[idx] = x;
+      positions[idx + 1] = y;
+      positions[idx + 2] = z;
+
+      positions[idx + 3] = x;
+      positions[idx + 4] = y;
+      positions[idx + 5] = z + len;
+
+      speeds[i] = 140 + Math.random() * 180;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const material = new THREE.LineBasicMaterial({
+      color: 0x67e8f9,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    const lines = new THREE.LineSegments(geometry, material);
+    const group = new THREE.Group();
+    group.add(lines);
+    group.visible = false;
+    this.scene.add(group);
+
+    this.warpStreaks = {
+      group,
+      lines,
+      material,
+      positions,
+      geometry,
+      currentOpacity: 0,
+      speeds
+    };
+  }
+
+  // --- SKILL CONSTELLATION TECH-TREE MATRIX ---
+
+  private setupConstellations(): void {
+    this.constellationLines = [];
+    this.constellationGroup.clear();
+    this.constellationGroup.visible = false;
+    this.scene.add(this.constellationGroup);
+
+    const pairs = [
+      { from: 'skill-python', to: 'skill-bi' },
+      { from: 'skill-python', to: 'skill-web' },
+      { from: 'skill-bi', to: 'skill-algorithms' },
+      { from: 'skill-algorithms', to: 'skill-robotics' },
+      { from: 'skill-web', to: 'skill-robotics' },
+      { from: 'skill-web', to: 'skill-mobile' },
+      { from: 'planet-dataforge', to: 'skill-python' },
+      { from: 'planet-customer360', to: 'skill-bi' },
+      { from: 'station-coficab', to: 'skill-bi' },
+      { from: 'belt-competitive', to: 'skill-algorithms' },
+      { from: 'planet-robotics', to: 'skill-robotics' },
+      { from: 'planet-masroufi', to: 'skill-mobile' }
+    ];
+
+    pairs.forEach((pair) => {
+      const geo = new THREE.BufferGeometry();
+      const pos = new Float32Array(6);
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+
+      const mat = new THREE.LineBasicMaterial({
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+
+      const line = new THREE.Line(geo, mat);
+      this.constellationGroup.add(line);
+
+      this.constellationLines.push({
+        line,
+        geo,
+        fromId: pair.from,
+        toId: pair.to,
+        fromIsSkill: pair.from.startsWith('skill-'),
+        toIsSkill: pair.to.startsWith('skill-')
+      });
+    });
   }
 
   public handleSkillsRowMode(isRow: boolean): void {
@@ -837,6 +972,99 @@ export class SolarSceneService {
 
       // Camera flight update
       this.cameraService.update(delta);
+
+      // --- WARP HYPER-DRIVE PARTICLES UPDATE ---
+      if (this.warpStreaks && this.cameraService.camera) {
+        const isTransitioning = this.cameraService.isTransitioningActive();
+        const isFlight = this.state.isFlightMode();
+        const flightSpeed = this.cameraService.getFlightSpeed();
+        const shouldWarp = isTransitioning || (isFlight && flightSpeed > 25);
+
+        const targetOpacity = shouldWarp ? 0.85 : 0;
+        this.warpStreaks.currentOpacity += (targetOpacity - this.warpStreaks.currentOpacity) * Math.min(1, delta * 6);
+        this.warpStreaks.material.opacity = this.warpStreaks.currentOpacity;
+
+        if (this.warpStreaks.currentOpacity > 0.02) {
+          this.warpStreaks.group.visible = true;
+          this.warpStreaks.group.position.copy(this.cameraService.camera.position);
+          this.warpStreaks.group.quaternion.copy(this.cameraService.camera.quaternion);
+
+          const pos = this.warpStreaks.positions;
+          const speeds = this.warpStreaks.speeds;
+          const speedMultiplier = (isFlight && flightSpeed > 25) ? 1.8 : 1.0;
+
+          for (let i = 0; i < speeds.length; i++) {
+            const idx = i * 6;
+            const dist = speeds[i] * delta * 2.2 * speedMultiplier;
+            pos[idx + 2] += dist;
+            pos[idx + 5] += dist;
+
+            if (pos[idx + 2] > 20) {
+              const x = (Math.random() - 0.5) * 120;
+              const y = (Math.random() - 0.5) * 100;
+              const z = -260 - Math.random() * 40;
+              const len = 14 + Math.random() * 22;
+
+              pos[idx] = x;
+              pos[idx + 1] = y;
+              pos[idx + 2] = z;
+              pos[idx + 3] = x;
+              pos[idx + 4] = y;
+              pos[idx + 5] = z + len;
+            }
+          }
+          this.warpStreaks.geometry.attributes['position'].needsUpdate = true;
+        } else {
+          this.warpStreaks.group.visible = false;
+        }
+      }
+
+      // --- CONSTELLATION TECH-TREE UPDATE ---
+      const showConstellations = this.state.isConstellationMode() || !!this.state.activeSkillPlanet();
+      if (this.constellationGroup) {
+        if (showConstellations && !isBlackHole) {
+          this.constellationGroup.visible = true;
+          const pulse = 0.45 + Math.sin(now * 0.003) * 0.25;
+
+          const p1 = new THREE.Vector3();
+          const p2 = new THREE.Vector3();
+
+          for (const item of this.constellationLines) {
+            let fromMesh: THREE.Object3D | undefined;
+            let toMesh: THREE.Object3D | undefined;
+
+            if (item.fromIsSkill) {
+              fromMesh = this.skillPlanetRecords.get(item.fromId)?.mesh;
+            } else {
+              fromMesh = this.objects.get(item.fromId)?.mesh;
+            }
+
+            if (item.toIsSkill) {
+              toMesh = this.skillPlanetRecords.get(item.toId)?.mesh;
+            } else {
+              toMesh = this.objects.get(item.toId)?.mesh;
+            }
+
+            if (fromMesh && toMesh) {
+              fromMesh.getWorldPosition(p1);
+              toMesh.getWorldPosition(p2);
+
+              const posAttr = item.geo.getAttribute('position') as THREE.BufferAttribute;
+              posAttr.setXYZ(0, p1.x, p1.y, p1.z);
+              posAttr.setXYZ(1, p2.x, p2.y, p2.z);
+              posAttr.needsUpdate = true;
+              (item.line.material as THREE.LineBasicMaterial).opacity = pulse;
+            }
+          }
+        } else {
+          this.constellationGroup.visible = false;
+        }
+      }
+
+      // Sync flight speed to state
+      if (this.state.isFlightMode()) {
+        this.state.setFlightVelocity(Math.round(this.cameraService.getFlightSpeed() * 320));
+      }
 
       // Camera shake effect during black hole
       if (this.blackHoleShakeIntensity > 0) {

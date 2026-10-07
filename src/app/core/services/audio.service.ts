@@ -376,4 +376,78 @@ export class AudioService {
       osc.stop(now + 0.9);
     } catch {}
   }
+
+  public playWarp(): void {
+    if (this.isMuted()) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(80, now);
+      osc.frequency.exponentialRampToValueAtTime(1400, now + 0.6);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 1.2);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.06, now + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 1.2);
+    } catch {}
+  }
+
+  public playThruster(): void {
+    if (this.isMuted()) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(95, now);
+      osc.frequency.linearRampToValueAtTime(65, now + 0.2);
+
+      gain.gain.setValueAtTime(0.03, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.25);
+    } catch {}
+  }
+
+  public speakVoice(text: string): void {
+    if (this.isMuted()) return;
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.05;
+      utterance.pitch = 0.92;
+      utterance.volume = this.volume();
+
+      // Find an English voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const engVoice = voices.find((v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Daniel') || v.name.includes('Samantha')));
+      if (engVoice) {
+        utterance.voice = engVoice;
+      }
+
+      window.speechSynthesis.speak(utterance);
+    } catch {}
+  }
 }

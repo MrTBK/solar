@@ -97,14 +97,13 @@ import { SOCIAL_DATA } from '../../data/social.data';
 
         <!-- Secondary Controls & Actions -->
         <div class="flex items-center gap-1.5 sm:gap-2">
-          <!-- Executive Dossier Button -->
+          <!-- Executive Dossier Export Button -->
           <button
-            (click)="openModal('dossier')"
-            [class.text-cyan-400]="activeModal() === 'dossier'"
-            class="hidden md:flex items-center gap-1 rounded-lg border border-slate-700/80 bg-slate-900/80 px-2.5 py-1.5 font-mono text-xs font-medium text-slate-300 transition-colors hover:border-slate-500 hover:text-white focus:ring-2 focus:ring-cyan-400 focus:outline-none"
-            title="Executive Dossier Brief"
+            (click)="openDossierExport()"
+            class="hidden md:flex items-center gap-1 rounded-lg border border-cyan-500/50 bg-cyan-950/40 px-2.5 py-1.5 font-mono text-xs font-bold text-cyan-300 transition-colors hover:border-cyan-400 hover:text-white hover:bg-cyan-900/60 focus:ring-2 focus:ring-cyan-400 focus:outline-none shadow-[0_0_12px_rgba(6,182,212,0.2)]"
+            title="Official Astronaut Flight Dossier & Printable CV"
           >
-            <span>DOSSIER</span>
+            <span>DOSSIER 📄</span>
           </button>
 
           <!-- Autopilot Tour Button -->
@@ -120,14 +119,36 @@ import { SOCIAL_DATA } from '../../data/social.data';
             <span class="text-[11px] font-bold">{{ isTourActive() ? 'TOUR [ON]' : 'TOUR' }}</span>
           </button>
 
-          <!-- Adaptive Quality Selector (HIGH / MED / LOW) -->
+          <!-- Pilot Mode Quick Button -->
           <button
-            (click)="cycleQuality()"
-            class="hidden lg:flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-900/80 px-2 py-1.5 font-mono text-[10px] text-slate-400 transition-colors hover:border-slate-600 hover:text-white focus:ring-2 focus:ring-slate-400 focus:outline-none"
-            [title]="'Quality Level: ' + qualityLevel() + ' (Click to cycle)'"
+            (click)="toggleFlight()"
+            [class.border-cyan-400]="isFlightMode()"
+            [class.bg-cyan-500/20]="isFlightMode()"
+            [class.text-cyan-300]="isFlightMode()"
+            class="hidden md:flex items-center gap-1 rounded-lg border border-slate-700/80 bg-slate-900/80 px-2.5 py-1.5 font-mono text-xs text-slate-300 transition-colors hover:border-cyan-400 hover:text-white focus:ring-2 focus:ring-cyan-400 focus:outline-none"
+            title="Toggle Probe Flight Cockpit (Press F)"
           >
-            <span>PERF:</span>
-            <span class="font-bold text-cyan-300">{{ qualityLevel() }}</span>
+            <span>PILOT</span>
+          </button>
+
+          <!-- Terminal CLI Button -->
+          <button
+            (click)="toggleTerminal()"
+            class="hidden sm:flex items-center gap-1 rounded-lg border border-emerald-500/40 bg-emerald-950/40 px-2 py-1.5 font-mono text-xs font-bold text-emerald-300 transition-colors hover:border-emerald-400 hover:bg-emerald-900/60 focus:ring-2 focus:ring-emerald-400 focus:outline-none"
+            title="Open Sci-Fi CLI Terminal (Press ~)"
+          >
+            <span>&gt;_</span>
+          </button>
+
+          <!-- AI Voice Toggle -->
+          <button
+            (click)="toggleVoice()"
+            [class.text-cyan-300]="isVoiceEnabled()"
+            [class.text-slate-500]="!isVoiceEnabled()"
+            class="hidden sm:flex items-center rounded-lg border border-slate-700/80 bg-slate-900/80 p-1.5 transition-colors hover:border-cyan-400 hover:text-white focus:ring-2 focus:ring-cyan-400 focus:outline-none"
+            [title]="isVoiceEnabled() ? 'AI Voice Assistant: ONLINE' : 'AI Voice Assistant: MUTED'"
+          >
+            <span class="text-xs">🎙</span>
           </button>
 
           <!-- Audio Mute Control -->
@@ -253,8 +274,26 @@ export class HudNavComponent {
   public isTourActive = computed(() => this.state.isTourActive());
   public isMuted = computed(() => this.audio.isMuted());
   public qualityLevel = computed(() => this.state.qualityLevel());
+  public isFlightMode = computed(() => this.state.isFlightMode());
+  public isVoiceEnabled = computed(() => this.state.isVoiceAssistantEnabled());
 
   public isMobileMenuOpen = signal<boolean>(false);
+
+  public toggleFlight(): void {
+    this.state.toggleFlightMode();
+  }
+
+  public toggleTerminal(): void {
+    this.state.toggleTerminal();
+  }
+
+  public toggleVoice(): void {
+    this.state.toggleVoiceAssistant();
+  }
+
+  public openDossierExport(): void {
+    this.state.openDossierExport();
+  }
 
   public flyTo(sector: 'system' | 'projects' | 'career' | 'skills' | 'about' | 'contact'): void {
     this.state.flyToSector(sector);

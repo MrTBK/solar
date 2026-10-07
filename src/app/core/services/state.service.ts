@@ -8,6 +8,7 @@ import { PROJECTS_DATA } from '../../data/project.data';
 import { SKILL_PLANETS, SkillPlanetItem, ALL_TRACKED_PLANETS, TrackedPlanetItem } from '../../data/skill.data';
 import { AudioService } from './audio.service';
 import { DeviceService } from './device.service';
+import { HapticService } from './haptic.service';
 
 export type ModalType =
   | 'project'
@@ -96,6 +97,7 @@ export class StateService {
   private router = inject(Router);
   private audio = inject(AudioService);
   private device = inject(DeviceService);
+  private haptic = inject(HapticService);
   private title = inject(Title);
   private meta = inject(Meta);
 
@@ -182,6 +184,14 @@ export class StateService {
     temperature: '5778 K (Core)'
   });
 
+  // Upgrades: Spaceship Flight Mode, Terminal, Constellation & AI Voice
+  public isFlightMode = signal<boolean>(false);
+  public flightVelocity = signal<number>(0);
+  public isTerminalOpen = signal<boolean>(false);
+  public isConstellationMode = signal<boolean>(false);
+  public isDossierExportOpen = signal<boolean>(false);
+  public isVoiceAssistantEnabled = signal<boolean>(true);
+
   constructor() {
     // If WebGL is not supported, default to 2D
     if (!this.device.isWebGLSupported()) {
@@ -208,6 +218,10 @@ export class StateService {
 
     this.selectedTarget.set(target);
     this.audio.playSelect();
+    this.haptic.medium();
+    if (this.isVoiceAssistantEnabled()) {
+      this.audio.speakVoice(`Entering orbit around ${target.name}`);
+    }
     this.updateTelemetry(target);
 
     if (target.id !== 'sun-aziz') {
@@ -524,6 +538,9 @@ export class StateService {
   public setSkillsRowMode(val: boolean): void {
     this.isSkillsRowMode.set(val);
     this.audio.playToggle();
+    if (this.isVoiceAssistantEnabled()) {
+      this.audio.speakVoice(val ? 'Planetary alignment protocol engaged.' : 'Standard orbital coordinates restored.');
+    }
     if (val) {
       this.closeModal();
       this.telemetry.set({
@@ -544,6 +561,7 @@ export class StateService {
       current.add(id);
       this.exploredPlanets.set(current);
       this.audio.playExplorationCheck();
+      this.haptic.success();
 
       // If all planets (Projects + Skills) are explored, trigger cosmic singularity!
       const count = ALL_TRACKED_PLANETS.filter((p) => current.has(p.id)).length;
@@ -566,6 +584,10 @@ export class StateService {
     this.activeSkillPlanet.set(skillPlanet);
     this.activeModal.set('skill-planet');
     this.audio.playSelect();
+    this.haptic.medium();
+    if (this.isVoiceAssistantEnabled()) {
+      this.audio.speakVoice(`Skill node: ${skillPlanet.name}`);
+    }
     this.telemetry.set({
       targetName: skillPlanet.name,
       targetCategory: `Skill Planet // ${skillPlanet.category}`,
@@ -582,6 +604,10 @@ export class StateService {
     this.isBlackHoleCompleted.set(false);
     this.closeModal();
     this.audio.playBlackHoleRumble();
+    this.haptic.heavy();
+    if (this.isVoiceAssistantEnabled()) {
+      this.audio.speakVoice('Warning: Gravitational collapse detected. Singularity forming.');
+    }
   }
 
   public onBlackHoleCompleted(): void {
@@ -599,6 +625,70 @@ export class StateService {
     this.isSkillsRowMode.set(false);
     this.audio.playBigBang();
     this.returnToSystem();
+  }
+
+  // --- UPGRADE METHODS ---
+
+  public toggleFlightMode(): boolean {
+    const next = !this.isFlightMode();
+    this.isFlightMode.set(next);
+    this.audio.playToggle();
+    this.haptic.medium();
+    if (next) {
+      this.closeModal();
+      if (this.isVoiceAssistantEnabled()) {
+        this.audio.speakVoice('Flight controls online. Manual pilot mode engaged.');
+      }
+    } else {
+      if (this.isVoiceAssistantEnabled()) {
+        this.audio.speakVoice('Pilot mode disengaged. Orbital stabilization active.');
+      }
+    }
+    return next;
+  }
+
+  public setFlightVelocity(vel: number): void {
+    this.flightVelocity.set(vel);
+  }
+
+  public toggleTerminal(): boolean {
+    const next = !this.isTerminalOpen();
+    this.isTerminalOpen.set(next);
+    this.audio.playToggle();
+    this.haptic.light();
+    return next;
+  }
+
+  public toggleConstellationMode(): boolean {
+    const next = !this.isConstellationMode();
+    this.isConstellationMode.set(next);
+    this.audio.playToggle();
+    this.haptic.light();
+    if (this.isVoiceAssistantEnabled()) {
+      this.audio.speakVoice(next ? 'Skill constellation matrix online.' : 'Constellations hidden.');
+    }
+    return next;
+  }
+
+  public openDossierExport(): void {
+    this.isDossierExportOpen.set(true);
+    this.audio.playSelect();
+    this.haptic.medium();
+  }
+
+  public closeDossierExport(): void {
+    this.isDossierExportOpen.set(false);
+    this.audio.playClose();
+  }
+
+  public toggleVoiceAssistant(): boolean {
+    const next = !this.isVoiceAssistantEnabled();
+    this.isVoiceAssistantEnabled.set(next);
+    this.audio.playToggle();
+    if (next) {
+      this.audio.speakVoice('AI Mission Control Voice Online.');
+    }
+    return next;
   }
 
   private updateTelemetry(body: CelestialBodyConfig): void {
